@@ -24,21 +24,22 @@ class SkillController extends Controller
         return $this->JsonResponse($validation->errors(),400);
     }
     // $selectedSkills = Skill::whereIn('id', (array) $request->choice_id)->get();
-     $selectedSkills = [];
+    //  $selectedSkills = [];
 
-    foreach ($request->choice_id as $id) {
-        $skill = Skill::find($id);
-        if ($skill) {
-            $selectedSkills[] = $skill;
-        }
-    }
-    return $this->JsonResponseWithData('your selection has saved',$selectedSkills,200);
+    // foreach ($request->choice_id as $id) {
+    //     $skill = Skill::find($id);
+    //     if ($skill) {
+    //         $selectedSkills[] = $skill;
+    //     }
+    // }
+      
+    // return $this->JsonResponseWithData('your selection has saved',$selectedSkills,200);
    }
 
    //delete a skill
    public function delete_skill($id){
 
-    $delete_skill=Skill::get()->where('id'->$id);
+    $delete_skill=Skill::get()->where('id',$id);
         if(!$delete_skill){
             return $this->JsonResponse("the skill is not found ",404);
         }
@@ -46,3 +47,4 @@ class SkillController extends Controller
             return $this->JsonResponse('the skill has deleted sucsessfully',200);
    }
 }
+

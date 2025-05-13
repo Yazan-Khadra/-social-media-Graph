@@ -14,11 +14,26 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
-        'password'
-
+        'mobile_number',
+        'password',
+        'profile_image',
+        'gender',
+        'birth_date',
+        'year_id',
+        'specialization_id',
+        'bio',
+        'cv',
+        'links',
+        'rate',
+        'social_links'
     ];
+    protected $casts = [
+        "data" => "array"
+    ];
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

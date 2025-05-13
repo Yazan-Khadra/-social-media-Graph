@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(JWTAuthController::class)->group(function() {
     Route::post('Register','register');
-    Route::middleware('Token')->group(function() {
-    });
+    Route::post('/user/login','login');
+    
 }
 );
 Route::controller(SkillController::class)->group(function(){

@@ -16,30 +16,68 @@ class JWTAuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'birth_date' =>'required|string|date|before:today',
+            'gender' =>'required|string',
+            'study_year'=>'required|string',
+            'email' => 'required_if:mobile_number,null|string|email|max:255|unique:users',
+            'mobile_number' => 'required_if:email,null|numeric|regex:/^09\d{8}$/|unique:users',
             'password' => 'required|string|min:6',
+            'confirm_password' => 'required|same:password',
+            // 'profile_image' => 'image|mimes:png,jpg',
+            // 'bio' =>'nullable|string',
+            // 'cv' => 'nullable|file|mimes:pdf',
+            // 'links' => 'nullable|array',
+            // 'rate' => 'numeric'
         ]);
+        if($request->study_year == "fourth" || $request->study_year == "fifth") {
+            if(empty($request->specialization) || $request->specialization === null){
+                $response = [
+                    "message" => "the specialization field required for the fourth and fifth year",
+                ];
+                return response()->json($response,422);
+            }
+        }
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json($validator->errors(), 422);
         }
 
         $user = User::create([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password' => Hash::make($request->get('password')),
+            "email" => $request->email !==null ? $request->email : null,
+            "mobile_number" =>$request->mobile_number !==null ? $request->mobile_number : null,
+            'password' => Hash::make($request->password),
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'birth_date' => $request->birth_date,
+            'gender' => $request->gender,
+            'study_year' =>$request->study_year,
+            // 
         ]);
-
         $token = JWTAuth::fromUser($user);
-
-        return response()->json(compact('user','token'), 201);
+        $response = [
+            "id" => $user->id,
+            "message" =>"registeration done successfully",
+            "token" => $token,
+        ];
+        return response()->json($response,201);
     }
 
     // User login
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+       
+              
+             $validation = Validator::make($request->all(),[
+            "email" => 'required_if:mobile_number,null|email|string|max:255',
+            "mobile_number" => 'required_if:email,null|numeric|regex:/^09\d{8}$/',
+            "password" =>"required",
+        ]);
+        if($validation->fails()) {
+            return response()->json($validation->errors(),422);
+        }
+         !empty($request->email) ? $credentials = $request->only('email', 'password') : $credentials = $request->only('mobile_number', 'password');
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
