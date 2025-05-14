@@ -23,7 +23,6 @@ class SkillController extends Controller
     if($validation->fails()){
         return $this->JsonResponse($validation->errors(),400);
     }
-    // $selectedSkills = Skill::whereIn('id', (array) $request->choice_id)->get();
      $selectedSkills = [];
 
     foreach ($request->choice_id as $id) {
@@ -38,10 +37,7 @@ class SkillController extends Controller
    //delete a skill
    public function delete_skill($id){
 
-    $delete_skill=Skill::get()->where('id'->$id);
-        if(!$delete_skill){
-            return $this->JsonResponse("the skill is not found ",404);
-        }
+        $delete_skill=Skill::get()->where('id'->$id);
         $delete_skill->delete();
             return $this->JsonResponse('the skill has deleted sucsessfully',200);
    }
