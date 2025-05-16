@@ -26,18 +26,19 @@ return new class extends Migration
             $table->string("bio")->nullable();
             $table->string("cv_url")->nullable();
             $table->json("social_links")->nullable();
+            $table->json("skills")->nullable();
             // role
             $table->string('role')->default("student");
             //    foreign keys
-            // $table->foreignId("year_id")->references("id")->on("years");
-            // $table->foreignId("specialization_id")->references("id")->on("specializations");
+            $table->foreignId("year_id")->nullable()->constrained('years')->onDelete('set null');
+            $table->foreignId("major_id")->nullable()->constrained('majors')->onDelete('set null');
             $table->timestamp('email_verified_at')->nullable();
-            
+
             $table->rememberToken();
             $table->timestamps();
         });
 
-       
+
     }
 
     /**
