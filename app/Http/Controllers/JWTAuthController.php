@@ -20,8 +20,8 @@ class JWTAuthController extends Controller
             'last_name' => 'required|string|max:255',
             'birth_date' =>'required|string|date|before:today',
             'gender' =>'required|string',
-            // 'year_id'=>'required|numeric',
-            'specialization_id' => 'numeric',
+            'year_id'=>'required|numeric',
+            'major_id' => 'numeric',
             'email' => 'required_if:mobile_number,null|string|email|max:255|unique:users',
             'mobile_number' => 'required_if:email,null|numeric|regex:/^09\d{8}$/|unique:users',
             'password' => 'required|string|min:6',
@@ -33,7 +33,7 @@ class JWTAuthController extends Controller
             // 'rate' => 'numeric'
         ]);
         if($request->year_id == 4 || $request->year_id == 5) {
-            if(empty($request->specialization) || $request->specialization === null){
+            if(empty($request->major_id) || $request->major_id === null){
                 $response = [
                     "message" => "the specialization field required for the fourth and fifth year",
                 ];
@@ -44,6 +44,7 @@ class JWTAuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
         }
+        
 
         $user = User::create([
             "email" => $request->email !==null ? $request->email : null,
@@ -53,10 +54,8 @@ class JWTAuthController extends Controller
             'last_name' => $request->last_name,
             'birth_date' => $request->birth_date,
             'gender' => $request->gender,
-            'study_year' =>$request->study_year,
-            //
-            // 'year_id' =>$request->year_id,
-            // 'specialization_id' =>$request->specialization_id ?: null,
+            'year_id' =>$request->year_id,
+            'major_id' =>$request->major_id ?: null,
             "profile_image" => $request->profile_image?:null,
             // 
         ]);

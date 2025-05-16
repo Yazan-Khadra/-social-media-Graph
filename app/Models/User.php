@@ -33,7 +33,9 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     protected $casts = [
-        "social_links" => "array"
+        "social_links" => "array",
+        "links" => "array",
+    
     ];
 
 

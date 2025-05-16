@@ -30,7 +30,7 @@ return new class extends Migration
             // role
             $table->string('role')->default("student");
             //    foreign keys
-            $table->foreignId("year_id")->nullable()->constrained('years')->onDelete('set null');
+            $table->foreignId("year_id")->nullable()->constrained('years')->onDelete("set null");
             $table->foreignId("major_id")->nullable()->constrained('majors')->onDelete('set null');
             $table->timestamp('email_verified_at')->nullable();
 
