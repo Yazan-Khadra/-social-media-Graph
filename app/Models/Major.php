@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Major extends Model
 {
-    protected $fillable=['Major_name'];
+    protected $fillable=['major_name'];
+
+    //each major has many student
+    public function users(): HasMany{
+
+        return $this->hasMany(User::class);
+    }
 }
