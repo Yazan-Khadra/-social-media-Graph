@@ -26,12 +26,12 @@ class User extends Authenticatable implements JWTSubject
         'specialization_id',
         'bio',
         'cv',
-        'links',
+        'social_links',
         'rate',
         'social_links'
     ];
     protected $casts = [
-        "data" => "array"
+        "social_links" => "array"
     ];
 
     public function getJWTIdentifier()

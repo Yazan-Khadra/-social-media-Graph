@@ -20,18 +20,19 @@ class JWTAuthController extends Controller
             'last_name' => 'required|string|max:255',
             'birth_date' =>'required|string|date|before:today',
             'gender' =>'required|string',
-            'study_year'=>'required|string',
+            // 'year_id'=>'required|numeric',
+            'specialization_id' => 'numeric',
             'email' => 'required_if:mobile_number,null|string|email|max:255|unique:users',
             'mobile_number' => 'required_if:email,null|numeric|regex:/^09\d{8}$/|unique:users',
             'password' => 'required|string|min:6',
             'confirm_password' => 'required|same:password',
-            // 'profile_image' => 'image|mimes:png,jpg',
+            'profile_image' => 'image|mimes:png,jpg',
             // 'bio' =>'nullable|string',
             // 'cv' => 'nullable|file|mimes:pdf',
             // 'links' => 'nullable|array',
             // 'rate' => 'numeric'
         ]);
-        if($request->study_year == "fourth" || $request->study_year == "fifth") {
+        if($request->year_id == 4 || $request->year_id == 5) {
             if(empty($request->specialization) || $request->specialization === null){
                 $response = [
                     "message" => "the specialization field required for the fourth and fifth year",
@@ -52,7 +53,9 @@ class JWTAuthController extends Controller
             'last_name' => $request->last_name,
             'birth_date' => $request->birth_date,
             'gender' => $request->gender,
-            'study_year' =>$request->study_year,
+            // 'year_id' =>$request->year_id,
+            // 'specialization_id' =>$request->specialization_id ?: null,
+            "profile_image" => $request->profile_image?:null,
             // 
         ]);
         $token = JWTAuth::fromUser($user);
