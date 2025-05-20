@@ -26,7 +26,7 @@ Route::controller(UserController::class)->group(function() {
         // delete social_links
         Route::Delete('/delete/student/social_link',"Delete_social_link");
     });
-    
+
 });
 Route::controller(SkillController::class)->group(function(){
     Route::get('skills_list','show_skill');
@@ -35,8 +35,9 @@ Route::controller(SkillController::class)->group(function(){
     Route::delete('delete_skill/{id}','delete_skill')->middleware('Token');
 });
 Route::controller(YearController::class)->group(function(){
-    Route::get('year_list','show_all_years');
-    Route::get('student_by_year/{id}','show_students_by_year');
+    Route::get('year_list', 'show_all_years');
+    Route::get('student_by_year/{id}', 'getStudentsByYear');
+    Route::get('students_by_major/{majorId}', 'getStudentsByMajor');
 });
 Route::controller(MajorController::class)->group(function(){
     Route::get('major_list','show_all_majors');
