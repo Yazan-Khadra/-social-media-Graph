@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->string('mobile_number')->nullable()->unique();
             $table->string('password');
-            $table->string('profile_image')->nullable();
+            $table->string('profile_image_url')->nullable();
             $table->string("bio")->nullable();
             $table->string("cv_url")->nullable();
             $table->json("social_links")->nullable();

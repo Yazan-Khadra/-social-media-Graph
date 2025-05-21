@@ -25,7 +25,8 @@ class User extends Authenticatable implements JWTSubject
         'year_id',
         'major_id',
         'bio',
-        'cv',
+        'cv_url',
+        'profile_image_url',
         'social_links',
         'rate',
         'social_links',
@@ -35,7 +36,6 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         "social_links" => "array",
         "links" => "array",
-    
     ];
 
 

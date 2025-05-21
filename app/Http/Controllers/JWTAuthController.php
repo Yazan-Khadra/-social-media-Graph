@@ -56,7 +56,7 @@ class JWTAuthController extends Controller
             'gender' => $request->gender,
             'year_id' =>$request->year_id,
             'major_id' =>$request->major_id ?: null,
-            "profile_image" => $request->profile_image?:null,
+            
             // 
         ]);
         $token = JWTAuth::fromUser($user);

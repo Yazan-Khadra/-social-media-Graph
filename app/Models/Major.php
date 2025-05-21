@@ -9,7 +9,7 @@ class Major extends Model
     protected $fillable=['major_name'];
 
     //each major has many student
-    public function users(): HasMany{
+    public function users(){
 
         return $this->hasMany(User::class);
     }

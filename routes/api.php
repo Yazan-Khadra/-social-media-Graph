@@ -22,9 +22,17 @@ Route::controller(UserController::class)->group(function() {
         //fill the user informatons
         Route::post("/fill/user/info","Fill_Profile_Info");
         // update social links route
-        Route::post('/student/social_links/update',"Update_Social_Links");
+        Route::put('/student/social_links/update',"Update_Social_Links");
         // delete social_links
         Route::Delete('/delete/student/social_link',"Delete_social_link");
+        // update bio
+        Route::put('/student/bio/update','Update_Bio');
+        // update profile photo
+        Route::post('/student/prfile-photo/update','Update_Profile_Image');
+        // delete profile image
+        Route::delete('/student/profile-image/delete', "Delete_Profile_Image");
+            
+        
     });
     
 });
