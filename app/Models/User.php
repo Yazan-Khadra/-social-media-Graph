@@ -44,7 +44,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function year(): BelongsTo
     {
-        return $this->belongsTo(Year::class);
+        return $this->belongsTo(Year::class, 'year_id', 'id');
     }
     //each student belong to One major
 
