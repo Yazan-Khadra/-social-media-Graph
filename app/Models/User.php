@@ -76,4 +76,14 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('gender', $gender)
                     ->where('role', 'student');
     }
+    public function followers()
+{
+    return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
+}
+
+public function followings()
+{
+    return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
+}
+
 }
