@@ -26,7 +26,7 @@ class JWTAuthController extends Controller
             'mobile_number' => 'required_if:email,null|numeric|regex:/^09\d{8}$/|unique:users',
             'password' => 'required|string|min:6',
             'confirm_password' => 'required|same:password',
-            'profile_image' => 'image|mimes:png,jpg',
+            
             // 'bio' =>'nullable|string',
             // 'cv' => 'nullable|file|mimes:pdf',
             // 'links' => 'nullable|array',
@@ -44,7 +44,7 @@ class JWTAuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
         }
-        
+
 
         $user = User::create([
             "email" => $request->email !==null ? $request->email : null,
@@ -122,31 +122,6 @@ class JWTAuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    /**
-     * Filter students by gender
-     *
-     * @param string $gender
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function filterByGender($gender)
-    {
-        $validGenders = ['male', 'female'];
 
-        if (!in_array(strtolower($gender), $validGenders)) {
-            return response()->json([
-                'message' => 'Invalid gender. Must be either male or female',
-                'status' => 400
-            ], 400);
-        }
-
-        $students = User::byGender($gender)
-            ->select('id', 'first_name', 'last_name', 'email', 'profile_image', 'gender', 'year_id', 'major_id')
-            ->get();
-
-        return response()->json([
-            'message' => 'Students filtered by gender: ' . $gender,
-            'data' => $students,
-            'status' => 200
-        ], 200);
-    }
+    
 }

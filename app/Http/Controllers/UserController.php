@@ -46,7 +46,7 @@ class UserController extends Controller{
        $set_data = User::findOrFail(Auth::user()->id);
        $set_data ->social_links = $request->links?:null;
        $set_data->bio = $request->bio?:null;
-    //    check if the cv is send
+    //    check if the cv is send   
        if($request->hasFile("cv")){
          $path = $request->cv->store('cvs', 'public');
         $set_data->cv_url = '/storage/' . $path;

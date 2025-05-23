@@ -59,6 +59,12 @@ return [
         'url' => env('APP_URL').'/storage/cvs',
         'visibility' => 'public',
     ],
+    'skills' => [
+          'driver' => 'local',
+        'root' => storage_path('app/public/skills'),
+        'url' => env('APP_URL').'/storage/skills',
+        'visibility' => 'public',
+    ],
 
         's3' => [
             'driver' => 's3',

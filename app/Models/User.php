@@ -36,6 +36,7 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         "social_links" => "array",
         "links" => "array",
+
     ];
 
 
@@ -44,7 +45,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function year(): BelongsTo
     {
-        return $this->belongsTo(Year::class);
+        return $this->belongsTo(Year::class, 'year_id', 'id');
     }
     //each student belong to One major
 

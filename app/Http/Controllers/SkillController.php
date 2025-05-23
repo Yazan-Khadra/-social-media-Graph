@@ -49,7 +49,7 @@ class SkillController extends Controller
         }
 
         // Get the authenticated user
-        $user = Auth::user();
+        $user = User::findOrFail(Auth::user()->id);
         if (!$user) {
             return $this->JsonResponse('User not authenticated', 401);
         }
@@ -62,37 +62,34 @@ class SkillController extends Controller
     }
 
    //delete a skill
-   public function delete_skill($id){
-        // Check authentication
-        $user = Auth::user();
-        if(!$user) {
-            return $this->JsonResponse('User not authenticated', 401);
+   public function delete_skill(Request $request){
+        $validation = Validator::make($request->all(),[
+            "skills" => "required|array",
+        ]);
+        if($validation->fails()){
+            return $this->JsonResponse($validation->errors(),422);
+        }
+        //get the user
+        $user = User::findOrFail(Auth::user()->id);
+        $user_skills = $user->skills ?? [];
+
+        // Ensure we're working with an array
+        if (!is_array($user_skills)) {
+            $user_skills = json_decode($user_skills, true) ?? [];
         }
 
-        // Get skills with null check
-        $skills = $user->skills ?? [];
-
-        // Check if user has any skills
-        if(empty($skills)) {
-            return $this->JsonResponse('No skills found', 404);
+        foreach($request->skills as $deleted_skill){
+            //use array filter higher order function to delete filter the array
+            $new_arraySkills = array_filter($user_skills, function($skill) use ($deleted_skill) {
+                return $skill['id'] != $deleted_skill['id'];
+            });
         }
-
-        // Find and remove the skill with the matching ID
-        $found = false;
-        $updatedSkills = [];
-        foreach($skills as $skill) {
-            if($skill['id'] == $id) {
-                $found = true;
-                continue; // Skip this skill (remove it)
-            }
-            $updatedSkills[] = $skill;
-        }
-
-        // Save the updated skills
-        $user->skills = $updatedSkills;
+        $user->skills = $new_arraySkills;
         $user->save();
-
-        return $this->JsonResponse('Skill deleted successfully', 200);
+        $response = [
+            "message" => "data deleted successfully"
+        ];
+        return $this->JsonResponse($response,200);
     }
 }
 
