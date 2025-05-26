@@ -12,11 +12,7 @@ class FollowController extends Controller
     public function follow($id)
     {
         $user = Auth::user();
-
-        if ($user->id == $id) {
-            return response()->json(['message' => 'You cannot follow yourself'], 400);
-        }
-
+       
         if (!$user->followings()->where('followed_user_id', $id)->exists()) {
             $user->followings()->attach($id);
             return response()->json(['message' => 'The follow-up was successful']);
@@ -30,8 +26,8 @@ class FollowController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->followings()->where('followed_user_id', $id)->exists()) {
-            $user->followings()->detach($id);
+        if ($user->followings->where('followed_user_id', $id)->exists()) {
+            $user->followings->detach($id);
             return response()->json(['message' => 'The follow-up has been canceled']);
         }
 
@@ -39,18 +35,18 @@ class FollowController extends Controller
     }
 
     // قائمة المتابعين
-    public function followers($id)
+    public function followers()
     {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail(Auth::user()->id);
         $followers = $user->followers()->get();
 
         return response()->json($followers);
     }
 
     // قائمة المتابعين الذين يتابعهم المستخدم
-    public function followings($id)
+    public function followings()
     {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail(Auth::user()->id);
         $followings = $user->followings()->get();
 
         return response()->json($followings);

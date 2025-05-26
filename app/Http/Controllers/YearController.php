@@ -36,27 +36,10 @@ class YearController extends Controller
     public function getStudentsByYear($id)
     {
         // Get the year with its students
-        $year = Year::with(['users' => function($query) {
-            $query->where('role', 'student')
-                  ->select('id', 'first_name', 'last_name', 'email', 'profile_image_url')
-                  ->with('major:id,Major_name');
-        }])->find($id);
-    
-
-        if (!$year) {
-            return $this->JsonResponse("Year not found", 404);
-        }
+        $year = Year::findOrFail($id);
         
         // Format students data
-        $students = $year->users->map(function($student) {
-            return [
-                'id' => $student->id,
-                'name' => $student->first_name . ' ' . $student->last_name,
-                'email' => $student->email,
-                'profile_image' => $student->profile_image,
-                'major' => $student->major ? $student->major->Major_name : null
-            ];
-        });
+        $students = $year->Students;
 
         return $this->JsonResponseWithData(
             "Students in " . $year->Year_name,

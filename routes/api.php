@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\YearController;
@@ -21,6 +21,8 @@ Route::controller(UserController::class)->group(function() {
         Route::get('/user/info',"Get_User_Profile_Info");
         //fill the user informatons
         Route::post("/fill/user/info","Fill_Profile_Info");
+        // add social links
+        Route::post('/student/social_links/add',"Set_Social_Links");
         // update social links route
         Route::put('/student/social_links/update',"Update_Social_Links");
         // delete social_links
@@ -31,6 +33,7 @@ Route::controller(UserController::class)->group(function() {
         Route::post('/student/prfile-photo/update','Update_Profile_Image');
         // delete profile image
         Route::delete('/student/profile-image/delete', "Delete_Profile_Image");
+        
             
         
     });
@@ -54,6 +57,6 @@ Route::controller(MajorController::class)->group(function(){
 Route::middleware("Token")->group(function () {
     Route::post('/follow/{id}', [FollowController::class, 'follow']);
     Route::post('/unfollow/{id}', [FollowController::class, 'unfollow']);
-    Route::get('/followers/{id}', [FollowController::class, 'followers']);
-    Route::get('/followings/{id}', [FollowController::class, 'followings']);
+    Route::get('/followers', [FollowController::class, 'followers']);
+    Route::get('/followings', [FollowController::class, 'followings']);
 });

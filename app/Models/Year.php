@@ -12,7 +12,7 @@ class Year extends Model
 
      //each year has many student
 
-    public function users(): HasMany
+    public function Students(): HasMany
     {
         return $this->hasMany(User::class, 'year_id', 'id');
     }

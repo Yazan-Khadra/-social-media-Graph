@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+       
         Schema::create('follows', function (Blueprint $table) {
-           Schema::create('follows', function (Blueprint $table) {
     $table->id();
     $table->unsignedBigInteger('user_id');         // الشخص اللي يتابع
     $table->unsignedBigInteger('followed_user_id'); // الشخص اللي يتم متابعته
@@ -24,7 +24,6 @@ return new class extends Migration
     $table->unique(['user_id', 'followed_user_id']); // لمنع تكرار نفس العلاقة
 });
 
-        });
     }
 
     /**

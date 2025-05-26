@@ -34,7 +34,6 @@ class UserController extends Controller{
         $validation = Validator::make($request->all(),[
             "bio" => 'string|max:255',
             "cv" => 'file|mimes:pdf',
-            "links" => 'array',
             "profile_image" => 'image|mimes:png,jpg',
         ]);
         if($validation->fails()) {
@@ -44,7 +43,6 @@ class UserController extends Controller{
    
         
        $set_data = User::findOrFail(Auth::user()->id);
-       $set_data ->social_links = $request->links?:null;
        $set_data->bio = $request->bio?:null;
     //    check if the cv is send   
        if($request->hasFile("cv")){
@@ -68,6 +66,18 @@ class UserController extends Controller{
                 'error' => $e->getMessage()
             ], 500);
         }
+ }
+ public function Set_Social_Links(Request $request) {
+    $validation = Validator::make($request->all(),[
+        "links" => "array",
+    ]);
+    if($validation->fails()) {
+        return response()->json($validation->errors(),422);
+    }
+    $user = User::findOrFail(Auth::user()->id)->update([
+        "social_links" => $request->links,
+    ]);
+    return response()->json("social links added sucssesfully",201);
  }
     //update the social links
     public function Update_Social_Links(Request $request) {
