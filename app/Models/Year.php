@@ -16,4 +16,8 @@ class Year extends Model
     {
         return $this->hasMany(User::class, 'year_id', 'id');
     }
+    public function projects():HasMany{
+
+        return $this->hasMany(Project::class,'year_id','id');
+    }
 }

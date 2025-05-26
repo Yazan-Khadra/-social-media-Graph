@@ -5,6 +5,7 @@ use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\YearController;
 use App\Http\Controllers\MajorController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,11 @@ Route::controller(JWTAuthController::class)->group(function() {
 
 }
 );
+Route::controller(ProjectController::class)->group(function(){
+    Route::get('projects_list','show_projects');
+    Route::post('add_project','add_project');
+    Route::delete('delete_project/{project_id}','delete_project');
+});
 Route::controller(UserController::class)->group(function() {
     Route::middleware("Token")->group(function() {
         //get user informations
@@ -33,9 +39,9 @@ Route::controller(UserController::class)->group(function() {
         Route::post('/student/prfile-photo/update','Update_Profile_Image');
         // delete profile image
         Route::delete('/student/profile-image/delete', "Delete_Profile_Image");
-        
-            
-        
+
+
+
     });
 
 });
@@ -48,7 +54,7 @@ Route::controller(SkillController::class)->group(function(){
 Route::controller(YearController::class)->group(function(){
     Route::get('year_list', 'show_all_years');
     Route::get('student_by_year/{id}', 'getStudentsByYear');
-    
+
 });
 Route::controller(MajorController::class)->group(function(){
     Route::get('major_list','show_all_majors');

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         SkillSeeder::class,
         YearSeeder::class,
         MajorSeeder::class,
-        UserSeeder::class
+        UserSeeder::class,
+        ProjectSeeder::class
     ]);
 }}
