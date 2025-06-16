@@ -5,6 +5,7 @@ use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\YearController;
 use App\Http\Controllers\MajorController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -65,4 +66,15 @@ Route::middleware("Token")->group(function () {
     Route::post('/unfollow/{id}', [FollowController::class, 'unfollow']);
     Route::get('/followers', [FollowController::class, 'followers']);
     Route::get('/followings', [FollowController::class, 'followings']);
+});
+Route::controller(PostController::class)->group(function() {
+    Route::middleware('Token')->group(function() {
+        Route::post('posts/make','Create_Post');
+        Route::delete('post/delete/{id}','Delete_Post');
+       
+    });
+    Route::get('posts/all','Get_Posts');
+     Route::put('post/update','Update_Post');
+ 
+    
 });

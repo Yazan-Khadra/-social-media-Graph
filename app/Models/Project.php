@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Year;
 use App\Models\Major;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -16,5 +17,9 @@ class Project extends Model
 
     public function major(){
         return $this->belongsTo(Major::class);
+    }
+    //got all the posts of this project
+    public function Posts():HasMany {
+        return $this->hasMany(Post::class);
     }
 }

@@ -22,7 +22,7 @@ class JWTAuthController extends Controller
             'gender' =>'required|string',
             'year_id'=>'required|numeric',
             'major_id' => 'numeric',
-            'email' => 'required_if:mobile_number,null|string|email|max:255|unique:users',
+            'email' => 'required_if:mobile_number,null|email|max:255|unique:users',
             'mobile_number' => 'required_if:email,null|numeric|regex:/^09\d{8}$/|unique:users',
             'password' => 'required|string|min:6',
             'confirm_password' => 'required|same:password',
