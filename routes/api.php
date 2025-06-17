@@ -7,6 +7,7 @@ use App\Http\Controllers\YearController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GroupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,4 +66,22 @@ Route::middleware("Token")->group(function () {
     Route::post('/unfollow/{id}', [FollowController::class, 'unfollow']);
     Route::get('/followers', [FollowController::class, 'followers']);
     Route::get('/followings', [FollowController::class, 'followings']);
+});
+
+Route::controller(GroupController::class)->group(function() {
+    Route::middleware("Token")->group(function() {
+        // Create group
+        Route::post('/groups', 'createGroup');
+        // Get all groups
+        Route::get('/groups', 'getAllGroups');
+        // Send invitation to join group
+        Route::post('/groups/{groupId}', 'addMember');
+        // Get pending invitations
+        Route::get('/invitations', 'getPendingInvitations');
+        // Respond to invitation
+        Route::post('/invitations/{invitationId}', 'respondToInvitation');
+        // Delete group
+        Route::delete('/groups/{groupId}', 'deleteGroup');
+
+    });
 });

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -29,8 +30,8 @@ class User extends Authenticatable implements JWTSubject
         'profile_image_url',
         'social_links',
         'rate',
-        'social_links',
-        'skills'
+        'skills',
+        'group_id'
     ];
 
     protected $casts = [
@@ -64,26 +65,27 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    /**
-     * Scope a query to filter users by gender
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $gender
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeByGender($query, $gender)
-    {
-        return $query->where('gender', $gender)
-                    ->where('role', 'student');
-    }
+
     public function followers()
-{
-    return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
-}
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
+    }
 
-public function followings()
-{
-    return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
-}
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
+    }
 
-}
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+
+    public function adminGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'admin_id');
+    }
+
+    }
