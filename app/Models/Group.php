@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\GroupStudentProject;
+use App\Models\Project;
 
 class Group extends Model
 {
     protected $fillable = [
         'group_name',
         'admin_id',
-        'year_id'
+        'project_id'
     ];
 
 
@@ -26,14 +28,20 @@ class Group extends Model
         return $this->hasMany(User::class);
     }
 
-    public function year(): BelongsTo
+    public function project(): BelongsTo
     {
-        return $this->belongsTo(Year::class);
+        return $this->belongsTo(Project::class);
     }
 
     public function invitations()
     {
         return $this->hasMany(GroupInvitation::class);
     }
+
+    public function groupStudentProjects()
+    {
+        return $this->hasMany(GroupStudentProject::class, 'group_id');
+    }
+
 
 }

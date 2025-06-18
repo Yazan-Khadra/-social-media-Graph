@@ -21,9 +21,4 @@ class Year extends Model
 
         return $this->hasMany(Project::class,'year_id','id');
     }
-
-    public function groups():HasMany
-    {
-        return $this->hasMany(Group::class);
-    }
 }

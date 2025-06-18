@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\User;
 use App\Models\Year;
 use App\Models\GroupInvitation;
+use App\Models\GroupStudentProject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -19,7 +20,7 @@ class GroupController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'group_name' => 'required|string|max:255',
-            'year_id' => 'required|exists:years,id'
+            'project_id' => 'required|exists:projects,id'
         ]);
 
         if ($validator->fails()) {
@@ -27,30 +28,32 @@ class GroupController extends Controller
         }
 
         $user = Auth::user();
-        //check if the user is already a member of a group
-        if ($user->group_id !== null) {
-            return $this->JsonResponse("You are already a member of group " . $user->group->group_name . ". Leave your current group first.", 400);
+
+        // Check if the user is already an admin of a group for this project
+        $adminGroup = Group::where('admin_id', $user->id)
+            ->where('project_id', $request->project_id)
+            ->first();
+
+        if ($adminGroup) {
+            return $this->JsonResponse("You are already an admin of group " . $adminGroup->group_name . " for this project.", 400);
         }
 
-        //create the group
+        // Create the group
         $group = Group::create([
             'group_name' => $request->group_name,
             'admin_id' => $user->id,
-            'year_id' => $request->year_id
+            'project_id' =>$request->project_id
         ]);
 
-        //add the group to the user
-        $user->group_id = $group->id;
-        $user->save();
-
-        return $this->JsonResponse("Group created successfully",201);
+        return $this->JsonResponse("Group created successfully", 201);
     }
 
     public function addMember(Request $request, $groupId)
     {
-        // Validate the request
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
+            'project_id' => 'required|exists:projects,id'
         ]);
 
         if ($validator->fails()) {
@@ -60,33 +63,44 @@ class GroupController extends Controller
         // Find the group and check if it exists
         $group = Group::findOrFail($groupId);
 
-        // Check if the user is the admin of the group
-        if ($group->admin_id !== Auth::id()) {
-            return $this->JsonResponse("Only the group admin can send invitations", 403);
+        // Check if the user is the admin of the group for this project
+        if ($group->admin_id !== Auth::id() || $group->project_id != $request->project_id) {
+            return $this->JsonResponse("Only the group admin for this project can send invitations", 403);
         }
 
-        // Check if the group has reached its maximum member limit
-        if ($group->members()->count() >= 6) {
-            return $this->JsonResponse("Group has reached its maximum member limit of 6", 400);
+        // Check if the group has reached its maximum member limit for this project
+        $members_of_group = GroupStudentProject::where('group_id', $groupId)
+            ->where('project_id', $request->project_id)
+            ->count();
+
+        if ($members_of_group >= 6) {
+            return $this->JsonResponse("Group has reached its maximum member limit for this project", 400);
         }
 
-        // Find the user to invite
-        $userToInvite = User::findOrFail($request->user_id);
-
-        // Check if the user is already a member of any group
-        if ($userToInvite->group_id !== null) {
-            return $this->JsonResponse("User is already a member of group " . $userToInvite->group->group_name, 400);
+        // Check if the user is already a member of any group for this project
+        $alreadyMember = GroupStudentProject::where('student_id', $request->user_id)
+            ->where('project_id', $request->project_id)
+            ->exists();
+        if ($alreadyMember) {
+            return $this->JsonResponse("User is already a member of a group for this project", 400);
         }
 
-        // Check if there's already a pending invitation
-        if ($group->invitations()->where('user_id', $userToInvite->id)->where('status', 'pending')->exists()) {
-            return $this->JsonResponse("An invitation has already been sent to this user", 400);
+        // Check if there's already a pending invitation for this user, group, and project
+        $pendingInvitation = GroupInvitation::where('group_id', $groupId)
+            ->where('user_id', $request->user_id)
+            ->where('status', 'pending')
+            ->where('project_id', $request->project_id)
+            ->exists();
+        if ($pendingInvitation) {
+            return $this->JsonResponse("An invitation has already been sent to this user for this project", 400);
         }
 
         // Create the invitation
-        $group->invitations()->create([
-            'user_id' => $userToInvite->id,
-            'status' => 'pending'
+        GroupInvitation::create([
+            'group_id' => $groupId,
+            'user_id' => $request->user_id,
+            'status' => 'pending',
+            'project_id' => $request->project_id
         ]);
 
         return $this->JsonResponse("Invitation sent successfully", 201);
@@ -139,7 +153,7 @@ class GroupController extends Controller
         return $this->JsonResponse($invitations, 200);
     }
 
-    public function deleteGroup($groupId)
+    public function deleteGroup(Request $request, $groupId)
     {
         // Find the group first
         $group = Group::find($groupId);
@@ -149,7 +163,7 @@ class GroupController extends Controller
             return $this->JsonResponse("Group not found", 404);
         }
 
-        // Check if the authenticated user is the admin of this group
+        // Check if the authenticated user is the admin of this group for this project
         if ($group->admin_id !== Auth::id()) {
             return $this->JsonResponse("Only the group admin can delete the group", 403);
         }
@@ -161,7 +175,7 @@ class GroupController extends Controller
 
     public function getAllGroups()
     {
-        $groups = Group::select('id', 'group_name', 'year_id')->get();
+        $groups = Group::select('id', 'group_name', 'project_id')->with('project')->get();
         return $this->JsonResponse($groups, 200);
     }
 }

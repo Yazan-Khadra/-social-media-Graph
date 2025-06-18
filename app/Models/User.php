@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\GroupStudentProject;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -31,13 +32,14 @@ class User extends Authenticatable implements JWTSubject
         'social_links',
         'rate',
         'skills',
-        'group_id'
+        'group_id',
+        'groups'
     ];
 
     protected $casts = [
         "social_links" => "array",
         "links" => "array",
-
+        "group_id" => "array"
     ];
 
 
@@ -88,4 +90,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Group::class, 'admin_id');
     }
 
+    public function groupStudentProjects()
+    {
+        return $this->hasMany(GroupStudentProject::class, 'student_id');
     }
+
+}

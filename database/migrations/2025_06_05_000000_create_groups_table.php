@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('group_name');
             $table->foreignId('admin_id')->constrained('users');
-            $table->foreignId('year_id')->constrained('years');
+            $table->foreignId('project_id')->constrained('projects');
             $table->timestamps();
         });
 
