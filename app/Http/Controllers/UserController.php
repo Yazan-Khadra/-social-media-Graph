@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller{
-    // get User Profile Info 
+    // get User Profile Info
     function Get_User_Profile_Info() {
         try {
-            
+
             $user_info=JWTAuth::parsetoken()->authenticate()->makeHidden(['email','mobile_number','password']);
             return response()->json($user_info,200);
         }
@@ -39,12 +39,13 @@ class UserController extends Controller{
         if($validation->fails()) {
             return response()->json($validation->errors(),422);
         }
-        // update user info
-   
         
+        // update user info
+
+
        $set_data = User::findOrFail(Auth::user()->id);
        $set_data->bio = $request->bio?:null;
-    //    check if the cv is send   
+    //    check if the cv is send
        if($request->hasFile("cv")){
          $path = $request->cv->store('cvs', 'public');
         $set_data->cv_url = '/storage/' . $path;
@@ -90,7 +91,7 @@ class UserController extends Controller{
         }
         //get the user
         $user = User::findOrFail(Auth::user()->id);
-    
+
     $user->social_links = $request->links;
     $user->save();
         $response  = [
@@ -114,7 +115,7 @@ class UserController extends Controller{
 //         //get the user
 //         $user = User::findOrFail(Auth::user()->id);
 //         $social_links = $user->social_links;
-    
+
 //         foreach($request->links as $deleted_link){
 //             //use array filter higher order function to delete filter the array
 //             $new_arrayLinks = array_filter($social_links, function($link)  use ($deleted_link) {
@@ -129,11 +130,11 @@ class UserController extends Controller{
 //         return response()->json($response,200);
 
 // }
-    // update bio 
+    // update bio
     public function Update_Bio(Request $request) {
         try{
         $user = Auth::user();
-        $validation = Validator::make($request->all(),[ 
+        $validation = Validator::make($request->all(),[
             'bio' => 'required|string|max:255'
         ]
         );
@@ -147,7 +148,7 @@ class UserController extends Controller{
             "message" => "bio updated successfully",
         ];
         return response()->json($response,202);
-    
+
     } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error while updating Bio',
@@ -157,7 +158,7 @@ class UserController extends Controller{
  }
  public function Update_Profile_Image(Request $request) {
    try{
-   
+
          $validation = Validator::make($request->all(),[
         'profile_image' =>'required|image|mimes:png,jpg',
          ]);
@@ -174,17 +175,17 @@ class UserController extends Controller{
         if(File::exists($previus_image_url)){
             File::delete($previus_image_url);
          // store the new image in file system and DB
-        
-            
+
+
         }
         $path = $request->profile_image->store("profile_images","public");
             $user->profile_image_url = '/storage/' . $path ;
-       
-        
+
+
      }
         $user->save();
         return response()->json("profile Image Updated Sucssesfully",202);
-   
+
     } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error in Updating Profile Image',

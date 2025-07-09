@@ -8,6 +8,7 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\CompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -84,4 +85,21 @@ Route::controller(GroupController::class)->group(function() {
         Route::delete('/groups/{groupId}', 'deleteGroup');
 
     });
+});
+
+Route::controller(CompanyController::class)->group(function() {
+    // Get all companies
+    Route::get('/companies', 'show_all_company');
+    // Search companies 
+    Route::get('/companies/search', 'search');
+    // Get specific company by ID
+    Route::get('/companies/{id}', 'show_one_company');
+    // Route::middleware("")->group(function() {
+        // Create company
+        Route::post('/companies', 'add_company');
+        // Update company
+        Route::put('/companies/{id}', 'update');
+        // Delete company
+        Route::delete('/companies/{id}', 'destroy');
+    // });
 });
