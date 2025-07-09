@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("description");
             $table->json('files');
             $table->string("title")->nullable();
+             $table->enum('privacy', ['public', 'followers', 'private'])->default('public');
             $table->foreignId("project_id")
             ->nullable()
             ->references("id")->on("projects")

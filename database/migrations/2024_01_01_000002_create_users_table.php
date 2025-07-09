@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             // registeration
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('gender');
-            $table->string("birth_date");
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('gender')->nullable();
+            $table->string("birth_date")->nullable();
             // profile informations
             $table->string('email')->nullable()->unique();
             $table->string('mobile_number')->nullable()->unique();
@@ -30,8 +30,8 @@ return new class extends Migration
             // role
             $table->string('role')->default("student");
             //    foreign keys
-            $table->foreignId("year_id")->nullable()->constrained('years')->onDelete("set null");
-            $table->foreignId("major_id")->nullable()->constrained('majors')->onDelete('set null');
+            $table->foreignId('year_id')->nullable()->constrained('years')->onDelete("set null");
+            $table->foreignId('major_id')->nullable()->constrained('majors')->onDelete('set null');
             $table->timestamp('email_verified_at')->nullable();
 
             $table->rememberToken();

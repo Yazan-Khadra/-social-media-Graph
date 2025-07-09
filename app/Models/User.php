@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\GroupStudentProject;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -29,14 +31,15 @@ class User extends Authenticatable implements JWTSubject
         'profile_image_url',
         'social_links',
         'rate',
-        'social_links',
-        'skills'
+        'skills',
+        'group_id',
+        'groups'
     ];
 
     protected $casts = [
         "social_links" => "array",
         "links" => "array",
-
+        "group_id" => "array"
     ];
 
 
@@ -64,22 +67,11 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    /**
-     * Scope a query to filter users by gender
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $gender
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeByGender($query, $gender)
-    {
-        return $query->where('gender', $gender)
-                    ->where('role', 'student');
-    }
+
     public function followers()
-{
-    return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
-}
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
+    }
 
 public function followings()
 {
@@ -89,5 +81,23 @@ public function followings()
 public function Posts() {
     return $this->belongsToMany(Post::class,"posts_users_pivot","user_id");
 }
+    
+
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+
+    public function adminGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'admin_id');
+    }
+
+    public function groupStudentProjects()
+    {
+        return $this->hasMany(GroupStudentProject::class, 'student_id');
+    }
 
 }

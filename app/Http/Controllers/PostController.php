@@ -9,6 +9,7 @@ use App\Models\Post_User_Pivot;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -25,6 +26,7 @@ class PostController extends Controller
             'description' =>'required|string',
             'files' => 'array',
             'title' =>'string|max:1500',
+            'privacy' => 'required|in:public,followers',
         ]);
         if($validation->fails()) {
             return $this->JsonResponse($validation->errors(),422);
@@ -50,6 +52,7 @@ class PostController extends Controller
             'files' => $files?:null,
             'title' =>$request->title?:null,
             'project_id' =>$request->project_id?:null,
+            'privacy' =>$request->privacy =="public"?"public" :"followers",
 
         ]);
         // check if the post is tags with many users
@@ -82,15 +85,32 @@ class PostController extends Controller
             ], 500);
         }
     }
-    public function Get_Posts() {
-        $posts = Post::with(['users' => function ($query) {
-    $query->select('first_name', 'last_name')
-    ; // Must include 'id' to maintain relation    
-}])->get();
+    public function Get_Posts($id) {
+//         $posts = Post::with(['users' => function ($query) {
+//     $query->select('id','first_name', 'last_name')
+//     ; // Must include 'id' to maintain relation    
+// }])->get();
+$user = User::findOrFail($id);
+
+  $followingIds = $user->followings()->pluck('users.id');
+  $followingIds->add($user->id);
+
+$posts = Post::where(function($query) use ($followingIds) {
+        $query->where('privacy', 'public')
+              ->orWhere(function($q) use ($followingIds) {
+                  $q->where('privacy', 'followers')
+                    ->whereHas('Users', function($subQuery) use ($followingIds) {
+                        $subQuery->whereIn('users.id', $followingIds);
+                    });
+              });
+    })
+    ->where('created_at', '>=', Carbon::now()->subDays(3))
+    ->orderBy('created_at', 'desc')
+    ->get(); 
         return PostsResource::collection($posts);
         
     }
-    public function Delete_Post($id) {
+     public function Delete_Post($id) {
         try {
             $post = Post::findOrFail($id);
             if($post->files !=null){

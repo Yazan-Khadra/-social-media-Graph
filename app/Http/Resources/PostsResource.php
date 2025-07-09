@@ -14,13 +14,22 @@ class PostsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-         $users = $this->users;
+          $timeAgo = $this->created_at ? $this->created_at->diffForHumans() : null;
+         $users = $this->users->map(function ($user){
+            return [
+                'id' => $user->id,
+                'name' => $user->first_name ." ".  $user->last_name,
+                
+            ];
+         });
         if($this->project_id == null){
            
             return [
                 'description'=>$this->description,
                 'files' => $this->files?:null,
                 'users' => $users,
+                'privacy' =>$this->privacy, 
+                'created_at' =>$timeAgo
                 
             ];
         }
@@ -30,7 +39,8 @@ class PostsResource extends JsonResource
             'files' => $this->files,
             'title' => $this->title,
             'project' => $project,
-            'users' => $users
+            'users' => $users,
+            'created_at' => $timeAgo,
         ];
     }
 }
