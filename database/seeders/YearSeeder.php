@@ -15,11 +15,11 @@ class YearSeeder extends Seeder
     {
 
         Year::insert([
-            ['id' => '1', 'Year_name' => 'First Year'],
-            ['id' => '2', 'Year_name' => 'Second Year'],
-            ['id' => '3', 'Year_name' => 'Third Year'],
-            ['id' => '4', 'Year_name' => 'Fourth Year'],
-            ['id' => '5', 'Year_name' => 'Fifth Year']
+            ['id' => '1', 'year_name' => 'First Year'],
+            ['id' => '2', 'year_name' => 'Second Year'],
+            ['id' => '3', 'year_name' => 'Third Year'],
+            ['id' => '4', 'year_name' => 'Fourth Year'],
+            ['id' => '5', 'year_name' => 'Fifth Year']
         ]);
     }
 }

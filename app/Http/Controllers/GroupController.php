@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Resources\GroupInformationResource;
+use App\Http\Resources\GroupMembersResource;
+use App\Http\Resources\PendingInvitationResource;
 use App\JsonResponseTrait;
 use App\Models\Group;
 use App\Models\User;
@@ -45,11 +49,16 @@ class GroupController extends Controller
             'admin_id' => $user->id,
             'project_id' =>$request->project_id
         ]);
-
+        GroupStudentProject::create([
+            'student_id'=>Auth::user()->id,
+            'group_id'=>$group->id,
+            'project_id'=>$request->project_id,
+            'is_admin'=>1,
+        ]);
         return $this->JsonResponse("Group created successfully", 201);
     }
 
-    public function addMember(Request $request, $groupId)
+    public function addMember(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -62,15 +71,16 @@ class GroupController extends Controller
         }
 
         // Find the group and check if it exists
-        $group = Group::findOrFail($groupId);
-
+        $group = Group::findOrFail($request->groupId);
+        
+        
         // Check if the user is the admin of the group for this project
-        if ($group->admin_id !== Auth::id() || $group->project_id != $request->project_id) {
+        if ($group->admin_id !== Auth::user()->id || $group->project_id != $request->project_id) {
             return $this->JsonResponse("Only the group admin for this project can send invitations", 403);
         }
 
         // Check if the group has reached its maximum member limit for this project
-        $members_of_group = GroupStudentProject::where('group_id', $groupId)
+        $members_of_group = GroupStudentProject::where('group_id', $request->groupId)
             ->where('project_id', $request->project_id)
             ->count();
 
@@ -87,7 +97,7 @@ class GroupController extends Controller
         }
 
         // Check if there's already a pending invitation for this user, group, and project
-        $pendingInvitation = GroupInvitation::where('group_id', $groupId)
+        $pendingInvitation = GroupInvitation::where('group_id', $request->groupId)
             ->where('user_id', $request->user_id)
             ->where('status', 'pending')
             ->where('project_id', $request->project_id)
@@ -98,7 +108,7 @@ class GroupController extends Controller
 
         // Create the invitation
         GroupInvitation::create([
-            'group_id' => $groupId,
+            'group_id' => $request->groupId,
             'user_id' => $request->user_id,
             'status' => 'pending',
             'project_id' => $request->project_id
@@ -115,23 +125,24 @@ class GroupController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->JsonResponse($validator->errors(), 400);
+            return $this->JsonResponse($validator->errors(), 422);
         }
 
         $invitation = GroupInvitation::findOrFail($invitationId);
+        
 
         if ($request->response === 'accept') {
             // Check if the group still has space
-            if ($invitation->group->members()->count() >= 6) {
-                return $this->JsonResponse("Group has reached its maximum member limit", 400);
-            }
+            // if ($invitation->group->members->count() >= 6) {
+            //     return $this->JsonResponse("Group has reached its maximum member limit", 400);
+            // }
 
             // Add user to the group
-        GroupStudentProject::create([
-            'student_id'=> Auth::user()->id,
-            'project_id' => $invitation->project_id,
-            'group_id' => $invitation->group->id,
-        ]);
+            GroupStudentProject::create([
+                'student_id' => Auth::user()->id,
+                'project_id' => $invitation->project_id,
+                'group_id' => $invitation->group_id
+            ]);
 
             // Update invitation status
             $invitation->status = 'accepted';
@@ -161,8 +172,11 @@ class GroupController extends Controller
             ->where('user_id', Auth::id())
             ->where('status', 'pending')
             ->get();
+            
+          
+            
 
-        return $this->JsonResponse($invitations, 200);
+        return PendingInvitationResource::collection($invitations);
     }
 
     public function deleteGroup(Request $request, $groupId)
@@ -187,7 +201,15 @@ class GroupController extends Controller
 
     public function getAllGroups()
     {
-        $groups = Group::select('id', 'group_name', 'project_id')->with('project')->get();
-        return $this->JsonResponse($groups, 200);
+        $user = User::where('id',Auth::user()->id)->get()->first();
+        
+        $groups = $user->groups;
+        return GroupInformationResource::collection($groups);
     }
+
+public function GetGroupMember($id){
+    $group=Group::findOrFail($id);
+    $members = $group->members;
+    return GroupMembersResource::collection($members);
+}
 }

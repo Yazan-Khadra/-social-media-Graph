@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('_posts__users__pivot', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId("user_id")->references("id")->on("users")->cascadeOnDelete();
+            $table->foreignId("user_id")->references("id")->on("students")->cascadeOnDelete();
             $table->foreignId("post_id")->references("id")->on("posts")->cascadeOnDelete();
             
         });

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\GroupStudentProject;
 use App\Models\Project;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Group extends Model
 {
@@ -23,9 +24,9 @@ class Group extends Model
     }
 
 
-    public function members(): HasMany
+    public function members(): BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class,'group_student_project','group_id','student_id');
     }
 
     public function project(): BelongsTo

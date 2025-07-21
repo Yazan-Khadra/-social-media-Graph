@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Skill;
 use App\Models\User;
 use App\JsonResponseTrait;
+use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 
@@ -20,9 +21,9 @@ class SkillController extends Controller
             return $this->JsonResponseWithData("this is the skill list",$skill,200);
    }
     public function show_user_skill(Request $request){
-        $user=Auth::user();
-        $user_skill=$user->skills;
-        return $this->JsonResponseWithData("this is the user skill list",$user_skill,200);
+        $user_skill=Student::where('id',Auth::user()->id)->get()->first();
+        
+        return $this->JsonResponseWithData("this is the user skill list",$user_skill->skills,200);
     }
 
 
@@ -49,7 +50,7 @@ class SkillController extends Controller
         }
 
         // Get the authenticated user
-        $user = User::findOrFail(Auth::user()->id);
+        $user = Student::findOrFail(Auth::user()->id);
         if (!$user) {
             return $this->JsonResponse('User not authenticated', 401);
         }
@@ -70,7 +71,7 @@ class SkillController extends Controller
             return $this->JsonResponse($validation->errors(),422);
         }
         //get the user
-        $user = User::findOrFail(Auth::user()->id);
+        $user = Student::findOrFail(Auth::user()->id);
         $user_skills = $user->skills ?? [];
 
         // Ensure we're working with an array

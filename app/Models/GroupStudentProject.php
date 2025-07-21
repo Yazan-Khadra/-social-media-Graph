@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class GroupStudentProject extends Model
 {
     protected $table = 'group_student_project';
-    protected $fillable = ['student_id', 'group_id', 'project_id'];
+    protected $fillable = ['student_id', 'group_id', 'project_id','is_admin'];
 
     public function student(): BelongsTo
     {
