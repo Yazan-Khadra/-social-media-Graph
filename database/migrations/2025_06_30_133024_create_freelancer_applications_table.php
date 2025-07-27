@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('freelance_post_id');
+            $table->string('name');
+            $table->string('cv')->nullable();
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();
 
             $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');

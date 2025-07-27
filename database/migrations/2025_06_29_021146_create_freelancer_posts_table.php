@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->enum('status', ['active', 'inactive', 'completed'])->default('active');
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->unsignedBigInteger('skill_id');
             $table->foreign('skill_id')->references('id')->on('skills')->onDelete('cascade');
             $table->timestamps();

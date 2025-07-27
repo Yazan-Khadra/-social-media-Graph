@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Year;
 use App\Models\GroupInvitation;
 use App\Models\GroupStudentProject;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -108,6 +109,7 @@ class GroupController extends Controller
 
     public function respondToInvitation(Request $request, $invitationId)
     {
+        try{
         $validator = Validator::make($request->all(), [
             'response' => 'required|in:accept,reject'
         ]);
@@ -125,9 +127,11 @@ class GroupController extends Controller
             }
 
             // Add user to the group
-            $user = Auth::user();
-            $user->group_id = $invitation->group_id;
-            $user->save();
+        GroupStudentProject::create([
+            'student_id'=> Auth::user()->id,
+            'project_id' => $invitation->project_id,
+            'group_id' => $invitation->group->id,
+        ]);
 
             // Update invitation status
             $invitation->status = 'accepted';
@@ -141,6 +145,14 @@ class GroupController extends Controller
 
             return $this->JsonResponse("Invitation rejected", 200);
         }
+    }
+    catch(Exception $e) {
+        $error = [
+            'message' =>$e->getMessage(),
+            'line'=> $e->getLine(),
+        ];
+        return $this->JsonResponse($error,422);
+    }
     }
 
     public function getPendingInvitations()

@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware -> alias([
             'Token' => \App\Http\Middleware\JwtMiddleware::class,
+            'Company' => \App\Http\Middleware\Company::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

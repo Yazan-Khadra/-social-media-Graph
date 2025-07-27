@@ -7,6 +7,7 @@ use App\Models\Year;
 use App\Models\Major;
 use App\Models\GroupStudentProject;
 use App\Models\Group;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -28,5 +29,9 @@ class Project extends Model
     public function groups()
     {
         return $this->hasMany(Group::class);
+    }
+    //got all the posts of this project
+    public function Posts():HasMany {
+        return $this->hasMany(Post::class);
     }
 }

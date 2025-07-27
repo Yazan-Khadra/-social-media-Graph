@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\User;
 use App\JsonResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -16,7 +18,7 @@ class CompanyController extends Controller
     //Get all companies
     public function show_all_company()
     {
-        $companies = Company::select(['company_name', 'description', 'logo_url'])->get();
+        $companies = Company::select(['company_name','email','mobile_number', 'description', 'logo_url'])->get();
         return $this->JsonResponseWithData('All Companies : ', $companies, 200);
     }
 
@@ -29,128 +31,204 @@ class CompanyController extends Controller
 
     public function Fill_Company_Info(Request $request)
     {
+        $user = Auth::user();
+
         $validation = Validator::make($request->all(), [
             'description' => 'nullable|string',
-            'phone' => 'required|regex:/^[1-9]{9}$/',
             'logo_url' => 'image|mimes:jpg,png',
         ]);
+
         if ($validation->fails()) {
-            return $this->JsonResponse($validation->errors(),400);
+            return $this->JsonResponse($validation->errors(), 400);
         }
-        $company_data = User::findOrFail(Auth::user()->id);
 
-        $company_data->phone= $request->phone?:null;
-        $company_data->description= $request->description?:null;
-        // company image
-        if($request->hasFile("logo_url")){
-            $path = $request->logo_url->store('logo_url','public');
-            $company_data->logo_url = '/storage/' . $path;
-           }
-           $company_data->save();
+                // Find existing company record for this user
+        $company = Company::where('email', $user->email)->first();
 
-        return $this->JsonResponse('data added sucsessfully', 201);
+        if (!$company) {
+            return $this->JsonResponse("Company not found. Please register as company first.", 404);
+        }
+
+        // Update company information
+        $company->update([
+            'description' => $request->description ?: null,
+        ]);
+
+        // Handle company logo
+        if ($request->hasFile("logo_url")) {
+            $path = $request->logo_url->store('logo_url', 'public');
+            $company->logo_url = '/storage/' . $path;
+        }
+
+        $company->save();
+
+        return $this->JsonResponse('Company information added successfully', 201);
     }
+
     public function Set_Social_Links(Request $request) {
-        $validation = Validator::make($request->all(),[
+
+        $user = Auth::user();
+
+        $validation = Validator::make($request->all(), [
             "links" => "array",
         ]);
-        if($validation->fails()) {
-            return $this->JsonResponse($validation->errors(),422);
-        }
-        $user = User::findOrFail(Auth::user()->id)->update([
-            "social_links" => $request->links,
-        ]);
-        return $this->JsonResponse("social links added sucssesfully",201);
-     }
-     public function Update_Social_Links(Request $request) {
 
-            $validation = Validator::make($request->all(),[
-                "links" => "required|array",
-            ]);
-            if($validation->fails()){
-                return $this->JsonResponse($validation->errors(),422);
-            }
-            //get the user
-            $user = User::findOrFail(Auth::user()->id);
-
-            $user->social_links = $request->links;
-            $user->save();
-            return$this->JsonResponse("data updated sucsessfully",200);
-            }
-
-
-    //update company info
-
-    public function update_company_info(Request $request, $id)
-    {
-        $company = User::findOrFail($id);
-        $validation = Validator::make($request->all(), [
-            'company_name'=>'string',
-            'phone'=>'regex:/^[1-9]{9}$/',
-            'description' => 'string',
-        ]);
         if ($validation->fails()) {
-            return $this->JsonResponse($validation->errors(),400);
+            return $this->JsonResponse($validation->errors(), 422);
         }
-        $companyData = $request->only(['company_name', 'description', 'email', 'phone', '']);
-        $company->update($companyData);
 
-        return $this->JsonResponse('Company updated successfully', 201);
+        // Find existing company record for this user
+        $company = Company::where('email', $user->email)->first();
 
-    }
-    public function update_logo_url(Request $request) {
-              $validation = Validator::make($request->all(),[
-             'logo_url' =>'required|image|mimes:png,jpg',
-              ]);
-
-              if($validation->fails()) {
-                 return $this->JsonResponse($validation->errors(),422);
-             }
-
-              $user = User::findOrFail(Auth::user()->id);
-              //update company image
-             if($request->hasFile('logo_url')){
-              //delete the previus image from file system
-                 $previus_image_url = public_path($user->profile_image_url);
-             if(File::exists($previus_image_url)){
-                 File::delete($previus_image_url);
-              // store the new image in file system and DB
-             }
-             $path = $request->profile_image->store("logo_url","public");
-                 $user->logo_url = '/storage/' . $path ;
-
-          }
-             $user->save();
-             return $this->JsonResponse("profile Image Updated Sucssesfully",202);
-
-      }
-      public function delete_logo_url(){
-
-        $user = User::findOrFail(Auth::user()->id);
-        //get the privous logo_url
-        $previus_image_url = public_path($user->logo_url);
-        if(File::exists($previus_image_url)){
-          File::delete($previus_image_url);
+        if (!$company) {
+            return $this->JsonResponse("Company not found. Please create company info first.", 404);
         }
-        // set null in DB after delete
-        $user->logo_url = null;
-            $user->save();
-            return $this->JsonResponse("Profile Image Deleted Successfully",200);
 
+        $company->social_links = $request->links;
+        $company->save();
+
+        return $this->JsonResponse("Social links added successfully", 201);
     }
 
-    //delete the company dashboard "بدها تعديل وقت الداشبورد "
-    public function destroy($id)
+    public function Update_Social_Links(Request $request) {
+
+        $user = Auth::user();
+
+        $validation = Validator::make($request->all(), [
+            "links" => "array",
+        ]);
+
+        if ($validation->fails()) {
+            return $this->JsonResponse($validation->errors(), 422);
+        }
+
+        // Find existing company record for this user
+        $company = Company::where('email', $user->email)->first();
+
+        if (!$company) {
+            return $this->JsonResponse("Company not found. Please create company info first.", 404);
+        }
+
+        $company->social_links = $request->links;
+        $company->save();
+
+        return $this->JsonResponse("Social links updated successfully", 200);
+    }
+
+            // Update company info for the authenticated user
+    public function update_company_info(Request $request)
     {
-        // delete the phptp also
-        $company = User::findOrFail($id);
-        $company->delete();
-        return $this->JsonResponse('Company deleted successfully', 201);
+        $user = Auth::user();
 
+        // Find existing company record for this user
+        $company = Company::where('email', $user->email)->first();
+
+        if (!$company) {
+            return $this->JsonResponse("Company not found. Please create company info first.", 404);
+        }
+
+        $validation = Validator::make($request->all(), [
+            'company_name' => 'string|max:255',
+            'description' => 'nullable|string',
+            'email' => 'email|unique:companies,email,' . $company->id,
+            'mobile_number' => 'numeric|regex:/^09\d{8}$/|unique:companies,mobile_number,' . $company->id,
+        ]);
+
+        if ($validation->fails()) {
+            return $this->JsonResponse($validation->errors(), 400);
+        }
+
+        $company->company_name = $request->company_name;
+        $company->description = $request->description;
+        if ($request->email) {
+            $company->email = $request->email;
+        }
+        if ($request->mobile_number) {
+            $company->mobile_number = $request->mobile_number;
+        }
+        $company->save();
+
+        return $this->JsonResponse('Company information updated successfully', 200);
     }
 
+            public function update_logo_url(Request $request) {
+        $user = Auth::user();
 
-     //Search companies by name
+        // Find existing company record for this user
+        $company = Company::where('email', $user->email)->first();
+
+        if (!$company) {
+            return $this->JsonResponse("Company not found. Please create company info first.", 404);
+        }
+
+        $validation = Validator::make($request->all(), [
+            'logo_url' => 'image|mimes:png,jpg',
+        ]);
+
+        if ($validation->fails()) {
+            return $this->JsonResponse($validation->errors(), 422);
+        }
+
+        // Delete the previous image from file system
+        if ($company->logo_url) {
+            $previous_image_url = public_path($company->logo_url);
+            if (File::exists($previous_image_url)) {
+                File::delete($previous_image_url);
+            }
+        }
+
+        // Store the new image
+        if ($request->hasFile('logo_url')) {
+            $path = $request->logo_url->store("logo_url", "public");
+            $company->logo_url = '/storage/' . $path;
+        }
+
+        $company->save();
+        return $this->JsonResponse("Logo updated successfully", 200);
+    }
+
+    public function delete_logo_url() {
+        $user = Auth::user();
+
+        // Find existing company record for this user
+        $company = Company::where('email', $user->email)->first();
+
+        if (!$company) {
+            return $this->JsonResponse("Company not found. Please create company info first.", 404);
+        }
+
+        // Delete the previous logo from file system
+        if ($company->logo_url) {
+            $previous_image_url = public_path($company->logo_url);
+            if (File::exists($previous_image_url)) {
+                File::delete($previous_image_url);
+            }
+        }
+
+        // Set null in DB after delete
+        $company->logo_url = null;
+        $company->save();
+
+        return $this->JsonResponse("Logo deleted successfully", 200);
+    }
+
+    // Delete the company account
+    public function destroy()
+    {
+        $user = Auth::user();
+
+        // Get company record for this user
+        $company = Company::where('email', $user->email)->first();
+
+        if ($company) {
+            $company->delete();
+        }
+
+        $user->delete();
+        return $this->JsonResponse('Company account deleted successfully', 200);
+    }
+
+    // Search companies by name
     public function search(Request $request)
     {
         $validation = Validator::make($request->all(), [

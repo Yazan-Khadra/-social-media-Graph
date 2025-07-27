@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('work_places', function (Blueprint $table) {
             $table->id();
-            $table->string('company_name');
-            $table->string('description')->nullable();
-            $table->string('email')->unique();
-            $table->string('mobile_number')->nullable();
-            $table->string('social_links')->nullable();
-            $table->string('logo_url')->nullable();
+            $table->enum('name', ['on_site', 'Remote work', 'Hybrid Work']);
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('work_places');
     }
 };

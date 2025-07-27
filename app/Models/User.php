@@ -33,7 +33,8 @@ class User extends Authenticatable implements JWTSubject
         'rate',
         'skills',
         'group_id',
-        'groups'
+        'groups',
+        'role'
     ];
 
     protected $casts = [
@@ -73,10 +74,15 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
     }
 
-    public function followings()
-    {
-        return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
-    }
+public function followings()
+{
+    return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
+}
+// user's post
+public function Posts() {
+    return $this->belongsToMany(Post::class,"posts_users_pivot","user_id");
+}
+
 
 
     public function group(): BelongsTo
@@ -94,5 +100,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(GroupStudentProject::class, 'student_id');
     }
+
+
 
 }

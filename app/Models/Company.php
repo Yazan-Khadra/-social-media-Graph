@@ -14,9 +14,13 @@ class Company extends Model
         'company_name',
         'description',
         'email',
-        'phone',
         'social_links',
+        'mobile_number',
         'logo_url'
+    ];
+
+    protected $casts = [
+        'social_links' => 'array',
     ];
 
     // Company has many FreelancerPosts
@@ -24,4 +28,6 @@ class Company extends Model
     {
         return $this->hasMany(FreelancerPost::class);
     }
+
+
 }

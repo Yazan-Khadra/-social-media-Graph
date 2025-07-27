@@ -17,7 +17,15 @@ class FreelancerPost extends Model
         'description',
         'status',
         'company_id',
-        'skill_id'    ];
+        'skill_id',
+        'work_places',
+        'job_types'
+    ];
+
+    protected $casts = [
+        'work_places' => 'array',
+        'job_types' => 'array',
+    ];
 
     //FreelancerPost belongs to Company
     public function company(): BelongsTo

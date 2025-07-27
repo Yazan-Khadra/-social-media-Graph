@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
         UserSeeder::class,
         ProjectSeeder::class,
         GroupSeeder::class,
-        CompanySeeder::class
+        CompanySeeder::class,
+        JobTypeSeeder::class,
+        WorkPlaceSeeder::class,
+        FreelancerPostSeeder::class
     ]);
 }}

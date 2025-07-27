@@ -8,7 +8,10 @@ class Freelancer_application extends Model
 {
     protected $fillable = [
         'student_id',
-        'freelance_post_id'
+        'freelance_post_id',
+        'name',
+        'cv',
+        'status'
     ];
 
     public function post()
@@ -18,3 +21,4 @@ class Freelancer_application extends Model
 }
 // get all post of company and application
 // user()->post()->application();
+

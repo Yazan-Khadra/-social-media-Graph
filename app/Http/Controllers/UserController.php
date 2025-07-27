@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostsResource;
+use App\JsonResponseTrait;
+use App\Models\Post;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Client\Events\RequestSending;
@@ -39,7 +42,7 @@ class UserController extends Controller{
         if($validation->fails()) {
             return response()->json($validation->errors(),422);
         }
-        
+
         // update user info
 
 

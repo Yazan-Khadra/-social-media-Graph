@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('_posts__users__pivot', function (Blueprint $table) {
             $table->id();
-            $table->string('company_name');
-            $table->string('description')->nullable();
-            $table->string('email')->unique();
-            $table->string('mobile_number')->nullable();
-            $table->string('social_links')->nullable();
-            $table->string('logo_url')->nullable();
             $table->timestamps();
+            $table->foreignId("user_id")->references("id")->on("users")->cascadeOnDelete();
+            $table->foreignId("post_id")->references("id")->on("posts")->cascadeOnDelete();
+            
         });
     }
 
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('_posts__users__pivot');
     }
 };

@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('academic_posts', function (Blueprint $table) {
             $table->id();
-            $table->string('company_name');
-            $table->string('description')->nullable();
-            $table->string('email')->unique();
-            $table->string('mobile_number')->nullable();
-            $table->string('social_links')->nullable();
-            $table->string('logo_url')->nullable();
+            $table->string('title');
+            $table->text('description');
+            $table->unsignedBigInteger('academic_staff_id');
             $table->timestamps();
+
+            $table->foreign('academic_staff_id')->references('id')->on('academic_staff')->onDelete('cascade');
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('academic_posts');
     }
 };
