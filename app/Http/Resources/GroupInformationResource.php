@@ -20,7 +20,8 @@ class GroupInformationResource extends JsonResource
         return [
             'id' => $this->id,
             'group_name' => $this->group_name,
-            'group_project' => $group_project[0]
+            'group_project' => $group_project[0],
+            'is_admin' => $this->pivot->is_admin,
         ];
     }
 }

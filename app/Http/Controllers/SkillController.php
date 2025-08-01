@@ -92,5 +92,11 @@ class SkillController extends Controller
         ];
         return $this->JsonResponse($response,200);
     }
+    public function Group_Post($skill_id) {
+        $skill = Skill::where('id',$skill_id)->get();
+        $group_post = $skill->Groups_Posts;
+        dd($group_post);
+        
+    }
 }
 

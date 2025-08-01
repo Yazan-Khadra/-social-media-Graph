@@ -208,7 +208,7 @@ class StudentController extends Controller
             return response()->json($validation->errors(),422);
         }
          //get the Authentic user
-         $user = User::findOrFail(Auth::user()->id);
+         $user = Student::findOrFail(Auth::user()->id);
          //update user image
         if($request->hasFile('profile_image')){
          //delete the previus image from file system

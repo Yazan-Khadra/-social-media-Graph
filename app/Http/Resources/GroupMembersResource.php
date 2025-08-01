@@ -18,6 +18,7 @@ class GroupMembersResource extends JsonResource
             'name' => $this->first_name ." " . $this->last_name,
             'image' => $this->profile_image_url,
             'skills' => $this->skills,
+            'is_admin' => $this->pivot->is_admin
         ];
     }
 }

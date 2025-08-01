@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\GroupPostController;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\YearController;
@@ -9,6 +10,8 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\FreelancerPostController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::controller(JWTAuthController::class)->group(function() {
     Route::post('/user/credintials','Register_Auth');
     Route::post('/user/login','login');
+    Route::middleware('Token')->group(function() {
+        Route::post('Register','register');
+        Route::post('/company/register','company_register');
+    });
    
 
 }
@@ -98,14 +105,50 @@ Route::controller(GroupController::class)->group(function() {
     });
 });
 
+Route::controller(CompanyController::class)->group(function() {
+    // Public routes (no authentication required)
+    Route::get('/companies', 'show_all_company');
+    Route::get('/companies/search', 'search');
+    Route::get('/companies/{id}', 'show_one_company');
+
+    Route::middleware(['Token', 'Company'])->group(function() {
+        Route::post('/companies/fill-info', 'Fill_Company_Info');
+        Route::post('/companies/social-links/add', 'Set_Social_Links');
+        Route::put('/companies/social-links/update', 'Update_Social_Links');
+        Route::put('/companies/update-info', 'update_company_info');
+        Route::post('/companies/update-logo', 'update_logo_url');
+        Route::delete('/companies/delete-logo', 'delete_logo_url');
+        Route::delete('/companies/delete-account', 'destroy');
+    });
+});
+
 Route::controller(PostController::class)->group(function() {
     Route::middleware('Token')->group(function() {
         Route::post('posts/make','Create_Post');
         Route::delete('post/delete/{id}','Delete_Post');
-       
+
     });
     Route::get('posts/all/{id}','Get_Posts');
      Route::put('post/update','Update_Post');
- 
+
+
+});
+Route::controller(GroupPostController::class)->group(function() {
+    Route::middleware('Student')->group(function() {
+        Route::post('group/post/create','Create_Post');
+    });
+    Route::get('group/posts/get','Get_Groups_Posts');
     
+});
+
+Route::controller(FreelancerPostController::class)->group(function() {
+    // Public routes (no authentication required)
+    Route::get('/freelancer-posts', 'get_all_posts');
+    Route::get('/freelancer-posts/{id}', 'show_post');
+
+    Route::middleware(['Token', 'Company'])->group(function() {
+        Route::post('/freelancer-posts/add', 'add_post');
+        Route::put('/freelancer-posts/update/{id}', 'update_post');
+        Route::delete('/freelancer-posts/delete/{id}', 'delete_post');
+    });
 });
