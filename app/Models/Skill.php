@@ -11,4 +11,9 @@ class Skill extends Model
         return $this->belongsToMany(GroupPost::class,'skiil_group_pivots','skill_id','group_id');
     }
 
+    //Skill has many FreelancerPosts
+    public function freelancerPosts()
+    {
+        return $this->hasMany(FreelancerPost::class, 'skill_id');
+    }
 }
