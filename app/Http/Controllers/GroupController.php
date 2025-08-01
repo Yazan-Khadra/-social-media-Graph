@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Year;
 use App\Models\GroupInvitation;
 use App\Models\GroupStudentProject;
+use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,7 +99,7 @@ class GroupController extends Controller
 
         // Check if there's already a pending invitation for this user, group, and project
         $pendingInvitation = GroupInvitation::where('group_id', $request->groupId)
-            ->where('user_id', $request->user_id)
+            ->where('student_id', $request->user_id)
             ->where('status', 'pending')
             ->where('project_id', $request->project_id)
             ->exists();
@@ -109,7 +110,7 @@ class GroupController extends Controller
         // Create the invitation
         GroupInvitation::create([
             'group_id' => $request->groupId,
-            'user_id' => $request->user_id,
+            'student_id' => $request->user_id,
             'status' => 'pending',
             'project_id' => $request->project_id
         ]);
@@ -169,7 +170,7 @@ class GroupController extends Controller
     public function getPendingInvitations()
     {
         $invitations = GroupInvitation::with('group')
-            ->where('user_id', Auth::id())
+            ->where('student_id', Auth::id())
             ->where('status', 'pending')
             ->get();
             
@@ -201,7 +202,7 @@ class GroupController extends Controller
 
     public function getAllGroups()
     {
-        $user = User::where('id',Auth::user()->id)->get()->first();
+        $user = Student::where('id',Auth::user()->id)->get()->first();
         
         $groups = $user->groups;
         return GroupInformationResource::collection($groups);
@@ -212,4 +213,5 @@ public function GetGroupMember($id){
     $members = $group->members;
     return GroupMembersResource::collection($members);
 }
+
 }

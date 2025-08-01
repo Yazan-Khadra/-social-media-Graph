@@ -8,7 +8,7 @@ class GroupInvitation extends Model
 {
     protected $fillable = [
         'group_id',
-        'user_id',
+        'student_id',
         'status',
         'project_id'
     ];

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\GroupPostController;
 use App\Http\Controllers\JWTAuthController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\YearController;
@@ -107,5 +108,12 @@ Route::controller(PostController::class)->group(function() {
     Route::get('posts/all/{id}','Get_Posts');
      Route::put('post/update','Update_Post');
  
+    
+});
+Route::controller(GroupPostController::class)->group(function() {
+    Route::middleware('Student')->group(function() {
+        Route::post('group/post/create','Create_Post');
+    });
+    Route::get('group/posts/get','Get_Groups_Posts');
     
 });

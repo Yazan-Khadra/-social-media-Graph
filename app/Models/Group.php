@@ -20,13 +20,14 @@ class Group extends Model
 
     public function admin(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'admin_id');
+        return $this->belongsTo(Student::class, 'admin_id');
     }
 
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'group_student_project','group_id','student_id');
+       return $this->belongsToMany(Student::class, 'group_student_project', 'group_id', 'student_id')
+                ->withPivot('is_admin');
     }
 
     public function project(): BelongsTo
