@@ -48,7 +48,7 @@ class StudentController extends Controller
           //    check if the profile image is send
           
        if($request->hasFile("profile_image")){
-        $path = $request->profile_image->store('profile_images','public');
+        $path = $request->profile_image->store('profile_images','public');  
        }
        $profile_image_url = '/storage/' . $path;
        
