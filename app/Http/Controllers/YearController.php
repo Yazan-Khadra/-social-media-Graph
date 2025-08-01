@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Year;
 use App\JsonResponseTrait;
+use App\Models\Student;
 
 class YearController extends Controller
 {
@@ -22,7 +23,7 @@ class YearController extends Controller
             return [
                 'id' => $year->id,
                 'name' => $year->Year_name,
-                'total_students' => User::where('year_id', $year->id)->where('role', 'student')->count()
+                'total_students' => Student::where('year_id', $year->id)->where('role', 'student')->count()
             ];
         });
 

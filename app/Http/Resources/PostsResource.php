@@ -15,8 +15,9 @@ class PostsResource extends JsonResource
     public function toArray(Request $request): array
     {
           $timeAgo = $this->created_at ? $this->created_at->diffForHumans() : null;
-         $users = $this->users->map(function ($user){
+         $users = $this->Students->map(function ($user){
             return [
+                
                 'id' => $user->id,
                 'name' => $user->first_name ." ".  $user->last_name,
                 
@@ -25,6 +26,7 @@ class PostsResource extends JsonResource
         if($this->project_id == null){
            
             return [
+                'post_id' => $this->id,
                 'description'=>$this->description,
                 'files' => $this->files?:null,
                 'users' => $users,
@@ -35,6 +37,7 @@ class PostsResource extends JsonResource
         }
         $project = $this->Project->name;
         return [
+            'post_id' => $this->id,
             'description' =>$this->description,
             'files' => $this->files,
             'title' => $this->title,

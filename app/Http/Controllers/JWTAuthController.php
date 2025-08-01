@@ -32,21 +32,22 @@ class JWTAuthController extends Controller
             "email" => $request->email !==null ? $request->email : null,
             "mobile_number" =>$request->mobile_number !==null ? $request->mobile_number : null,
             'password' => Hash::make($request->password),
+            'role'=>$request->role?:"student",
         ]);
         $token = JWTAuth::fromUser($user);
         $response = [
             "id" => $user->id,
-            "message" =>"registration done successfully",
+            'role' => $user->role,
+            "message" =>"registeration done successfully",
             "token" => $token,
         ];
         return $this->JsonResponse($response,201);
 
     }
-    //user register
     public function register(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            // user info
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'birth_date' =>'required|string|date|before:today',
@@ -54,6 +55,12 @@ class JWTAuthController extends Controller
             "profile_image" => 'image|mimes:png,jpg',
             'year_id'=>'required|numeric',
             'major_id' => 'numeric',
+
+
+            // 'bio' =>'nullable|string',
+            // 'cv' => 'nullable|file|mimes:pdf',
+            // 'links' => 'nullable|array',
+            // 'rate' => 'numeric'
         ]);
         if($request->year_id == 4 || $request->year_id == 5) {
             if(empty($request->major_id) || $request->major_id === null){
@@ -67,13 +74,12 @@ class JWTAuthController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
         }
+          //    check if the profile image is send
 
-        //check if the profile image is send
-
-        if($request->hasFile("profile_image")){
+       if($request->hasFile("profile_image")){
         $path = $request->profile_image->store('profile_images','public');
-        }
-        $profile_image_url = '/storage/' . $path;
+       }
+       $profile_image_url = '/storage/' . $path;
 
         $user = User::where('id',Auth::user()->id)->update([
 
@@ -84,101 +90,12 @@ class JWTAuthController extends Controller
             'gender' => $request->gender,
             'year_id' =>$request->year_id,
             'major_id' =>$request->major_id ?: null,
+
+            //
         ]);
-        $token = JWTAuth::fromUser($user);
-        $response = [
-            "id" => $user->id,
-            "message" =>"registeration done successfully",
-            "token" => $token,
-        ];
-        return response()->json($response,201);
+
+        return response()->json("information added sucsessfully",201);
     }
-    //company register
-        public function company_register(Request $request){
-            $validator = Validator::make($request->all(), [
-                'company_name' => 'required|string',
-            ]);
-
-            if($validator->fails()) {
-                return response()->json($validator->errors(), 422);
-            }
-
-            // Get the authenticated user
-            $user = Auth::user();
-
-            // Update user role to company
-            $user = User::where('id', Auth::user()->id)->update([
-                "role" => "company"
-            ]);
-            $user = Auth::user();
-
-            // Create or update company record with company_name
-            Company::updateOrCreate(
-                ['email' => Auth::user()->email,
-                'mobile_number' => Auth::user()->mobile_number],
-                [
-                    'company_name' => $request->company_name,
-                    'description' => null,
-                    'logo_url' => null,
-                ]
-            );
-
-            $token = JWTAuth::fromUser($user);
-            $response = [
-                "id" => $user->id,
-                "message" => "Company registration done successfully",
-                "token" => $token,
-                "role" => "company"
-            ];
-            return response()->json($response, 201);
-        }
-
-    //academic register
-    public function academic_register(Request $request){
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'gender' => 'required|string',
-            'birth_date' => 'required|date|before:today',
-        ]);
-
-        if($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        // Get the authenticated user
-        $user = Auth::user();
-
-        // Update user role to academic
-        User::where('id', $user->id)->update([
-            "role" => "academic"
-        ]);
-        $user = Auth::user();
-
-        // Create or update academic staff record
-        AcademicStaff::updateOrCreate(
-            [
-                'email' => $user->email,
-                'mobile_number' => $user->mobile_number
-            ],
-            [
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'gender' => $request->gender,
-                'birth_date' => $request->birth_date,
-            ]
-        );
-
-        $token = JWTAuth::fromUser($user);
-        $response = [
-            "id" => $user->id,
-            "message" => "Academic staff registration done successfully",
-            "token" => $token,
-            "role" => "academic"
-        ];
-        return response()->json($response, 201);
-    }
-
 
     // User login
     public function login(Request $request){

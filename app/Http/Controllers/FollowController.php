@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserInfoResource;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -37,17 +39,19 @@ class FollowController extends Controller
     // قائمة المتابعين
     public function followers()
     {
-        $user = User::findOrFail(Auth::user()->id);
-        $followers = $user->followers()->get();
+        $user = Student::findOrFail(Auth::user()->id);
+     
+        $followers = $user->User->followers->Student;
 
-        return response()->json($followers);
+        return UserInfoResource::collection($followers);
     }
 
     // قائمة المتابعين الذين يتابعهم المستخدم
     public function followings()
     {
-        $user = User::findOrFail(Auth::user()->id);
-        $followings = $user->followings()->get();
+        $user = Student::findOrFail(Auth::user()->id);
+     
+        $followings = $user->User->followings;
 
         return response()->json($followings);
     }

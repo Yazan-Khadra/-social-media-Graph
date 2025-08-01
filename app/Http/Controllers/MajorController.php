@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\JsonResponseTrait;
 use App\Models\User;
 use App\Models\Major;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class MajorController extends Controller
@@ -21,7 +22,7 @@ class MajorController extends Controller
             return $this->JsonResponse("Major not found", 404);
         }
 
-        $students = User::where('major_id', $id)
+        $students = Student::where('major_id', $id)
             ->where('role', 'student')
             ->select('id', 'first_name', 'last_name', 'email', 'profile_image_url', 'year_id')
             ->with(['year:id,Year_name'])

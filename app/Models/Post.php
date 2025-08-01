@@ -17,8 +17,8 @@ class Post extends Model
         'files' => 'array'
     ];
     // user of posts
-    public function Users() {
-        return $this->belongsToMany(User::class,"_posts__users__pivot",'post_id','user_id');
+    public function Students() {
+        return $this->belongsToMany(Student::class,"_posts__users__pivot",'post_id','user_id');
     }
     //the post project
     public function Project() {

@@ -14,7 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware -> alias([
             'Token' => \App\Http\Middleware\JwtMiddleware::class,
+<<<<<<< HEAD
             'Company' => \App\Http\Middleware\Company::class,
+=======
+            'Student' => \App\Http\Middleware\StudentMiddleware::class,
+>>>>>>> 3c218e10693593154f67116bec07cc453f936373
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

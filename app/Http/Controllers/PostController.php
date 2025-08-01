@@ -6,6 +6,7 @@ use App\Http\Resources\PostsResource;
 use App\JsonResponseTrait;
 use App\Models\Post;
 use App\Models\Post_User_Pivot;
+use App\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -90,23 +91,24 @@ class PostController extends Controller
 //     $query->select('id','first_name', 'last_name')
 //     ; // Must include 'id' to maintain relation    
 // }])->get();
-$user = User::findOrFail($id);
+$student = Student::findOrFail($id);
 
-  $followingIds = $user->followings()->pluck('users.id');
-  $followingIds->add($user->id);
+  $followingIds = $student->User->followings->pluck('users.id');
+  $followingIds->add($student->id);
 
 $posts = Post::where(function($query) use ($followingIds) {
         $query->where('privacy', 'public')
               ->orWhere(function($q) use ($followingIds) {
                   $q->where('privacy', 'followers')
-                    ->whereHas('Users', function($subQuery) use ($followingIds) {
-                        $subQuery->whereIn('users.id', $followingIds);
+                    ->whereHas('Students', function($subQuery) use ($followingIds) {
+                        $subQuery->whereIn('students.id', $followingIds);
                     });
               });
     })
     ->where('created_at', '>=', Carbon::now()->subDays(3))
     ->orderBy('created_at', 'desc')
     ->get(); 
+    
         return PostsResource::collection($posts);
         
     }

@@ -10,17 +10,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\GroupStudentProject;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'first_name',
-        'last_name',
         'email',
         'mobile_number',
         'password',
+<<<<<<< HEAD
         'profile_image',
         'gender',
         'birth_date',
@@ -35,28 +36,14 @@ class User extends Authenticatable implements JWTSubject
         'group_id',
         'groups',
         'role'
+=======
+>>>>>>> 3c218e10693593154f67116bec07cc453f936373
     ];
-
-    protected $casts = [
-        "social_links" => "array",
-        "links" => "array",
-        "group_id" => "array"
-    ];
-
 
 
     //each student belong to One year
 
-    public function year(): BelongsTo
-    {
-        return $this->belongsTo(Year::class, 'year_id', 'id');
-    }
-    //each student belong to One major
-
-    public function major():BelongsTo
-    {
-        return $this->belongsTo(Major::class);
-    }
+ 
 
     public function getJWTIdentifier()
     {
@@ -78,17 +65,40 @@ public function followings()
 {
     return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
 }
+<<<<<<< HEAD
 // user's post
 public function Posts() {
     return $this->belongsToMany(Post::class,"posts_users_pivot","user_id");
 }
 
+=======
+// user's post 
+// public function Posts() {
+//     return $this->belongsToMany(Post::class,"posts_users_pivot","user_id");
+// }
+    
+>>>>>>> 3c218e10693593154f67116bec07cc453f936373
 
 
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class);
+//     public function groups(): BelongsToMany
+//     {
+//         return $this->belongsToMany(Group::class,'group_student_project','student_id')->withPivot('is_admin');
+//     }
+
+
+//     public function adminGroups(): HasMany
+//     {
+//         return $this->hasMany(Group::class, 'admin_id');
+//     }
+
+//     public function groupStudentProjects()
+//     {
+//         return $this->hasMany(GroupStudentProject::class, 'student_id');
+//     }
+    public function Student()  {
+        return $this->hasOne(Student::class,'user_id');
     }
+<<<<<<< HEAD
 
 
     public function adminGroups(): HasMany
@@ -103,4 +113,6 @@ public function Posts() {
 
 
 
+=======
+>>>>>>> 3c218e10693593154f67116bec07cc453f936373
 }
