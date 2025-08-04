@@ -60,7 +60,7 @@ public function year(): BelongsTo
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class,'group_student_project','student_id')->withPivot('is_admin');
+        return $this->belongsToMany(Group::class,'group_student_project','student_id')->withPivot(['is_admin','skill_id']);
     }
 
 

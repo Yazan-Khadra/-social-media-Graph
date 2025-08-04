@@ -18,6 +18,21 @@ class JWTAuthController extends Controller
 {
     use JsonResponseTrait;
     // User registration
+    public function company_register(Request $request) {
+        $validation = Validator::make($request->all(),[
+            'company_name' => 'required|string',
+            'profile_image' => 'file|mimes:png,jpg'
+        ]);
+        if($request->hasFile("profile_image")){
+        $path = $request->profile_image->store('profile_images','public');
+       }
+       $profile_image_url = '/storage/' . $path;
+       Company::create([
+        'company_name' => $request->company_name,
+        "logo_url" => $profile_image_url
+       ]);
+       return $this->JsonResponse("company created succsefully",201);
+    }
     public function Register_Auth(Request $request) {
         $validator = Validator::make($request->all(),[
             'email' => 'required_if:mobile_number,null|email|max:255|unique:users',
@@ -28,11 +43,12 @@ class JWTAuthController extends Controller
         if($validator->fails()) {
             return $this->JsonResponse($validator->errors(),422);
         }
+        
         $user= User::create([
             "email" => $request->email !==null ? $request->email : null,
             "mobile_number" =>$request->mobile_number !==null ? $request->mobile_number : null,
             'password' => Hash::make($request->password),
-            'role'=>$request->role?:"student",
+            'role'=>$request->role,
         ]);
         $token = JWTAuth::fromUser($user);
         $response = [

@@ -12,7 +12,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FreelancerPostController;
+use App\Http\Controllers\GroupApllayController;
 use App\Http\Controllers\StudentController;
+use App\Models\GroupApllay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +105,14 @@ Route::controller(GroupController::class)->group(function() {
         Route::get('/group/member/{id}','GetGroupMember');
 
     });
+});
+Route::controller(GroupApllayController::class)->group(function() {
+    Route::middleware("Token")->group(function() {
+        Route::post("group/applay","Applay_to_Group");
+    });
+    Route::post("Applay/response",'Response_To_Applay_Request');
+    Route::get("Applay/get/{group_id}","Get_Applay_Requests");
+    
 });
 
 Route::controller(CompanyController::class)->group(function() {

@@ -27,7 +27,7 @@ class Group extends Model
     public function members(): BelongsToMany
     {
        return $this->belongsToMany(Student::class, 'group_student_project', 'group_id', 'student_id')
-                ->withPivot('is_admin');
+                ->withPivot(['is_admin','skill_id']);
     }
 
     public function project(): BelongsTo
@@ -43,6 +43,9 @@ class Group extends Model
     public function groupStudentProjects()
     {
         return $this->hasMany(GroupStudentProject::class, 'group_id');
+    }
+    public function Applaies() {
+        return $this->hasMany(GroupApllay::class,'group_id');
     }
 
 

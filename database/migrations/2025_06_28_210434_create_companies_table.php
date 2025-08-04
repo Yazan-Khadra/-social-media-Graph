@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('company_name');
             $table->string('description')->nullable();
-            $table->string('email')->unique();
             $table->string('mobile_number')->nullable();
             $table->string('social_links')->nullable();
             $table->string('logo_url')->nullable();

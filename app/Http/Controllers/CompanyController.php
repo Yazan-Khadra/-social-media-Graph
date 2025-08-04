@@ -16,6 +16,7 @@ class CompanyController extends Controller
     use JsonResponseTrait;
 
     //Get all companies
+   
     public function show_all_company()
     {
         $companies = Company::select(['company_name','email','mobile_number', 'description', 'logo_url'])->get();
