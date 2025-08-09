@@ -219,5 +219,11 @@ public function GetGroupMember($id){
     
     return GroupMembersResource::collection($members);
 }
+public function Leave_Group($group_id) {
+    GroupStudentProject::where("group_id",$group_id)
+    ->where('student_id',Auth::user()->id)
+    ->delete();
+    return $this->JsonResponse("you leave the group successfully",200);
+}
 
 }

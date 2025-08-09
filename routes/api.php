@@ -88,7 +88,7 @@ Route::middleware("Token")->group(function () {
 });
 
 Route::controller(GroupController::class)->group(function() {
-    Route::middleware("Token")->group(function() {
+    Route::middleware(["Token","Student"])->group(function() {
         // Create group
         Route::post('/groups_Create', 'createGroup');
         // Get all groups
@@ -103,11 +103,15 @@ Route::controller(GroupController::class)->group(function() {
         Route::delete('/groups/{groupId}', 'deleteGroup');
         //get group's members
         Route::get('/group/member/{id}','GetGroupMember');
+        //leave group
+        Route::get('group/leave/{group_id}', 'Leave_Group');
+            
+        
 
     });
 });
 Route::controller(GroupApllayController::class)->group(function() {
-    Route::middleware("Token")->group(function() {
+    Route::middleware(["Token","Student"])->group(function() {
         Route::post("group/applay","Applay_to_Group");
     });
     Route::post("Applay/response",'Response_To_Applay_Request');
@@ -148,6 +152,7 @@ Route::controller(GroupPostController::class)->group(function() {
         Route::post('group/post/create','Create_Post');
     });
     Route::get('group/posts/get','Get_Groups_Posts');
+    Route::delete("post/delete/{post_id}","Delete_Post");
     
 });
 

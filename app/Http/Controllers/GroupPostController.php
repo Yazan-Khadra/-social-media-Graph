@@ -46,5 +46,9 @@ class GroupPostController extends Controller
         ])->get();
         return GroupPostResource::collection($posts);
     }
+    public function Delete_Post($post_id) {
+        GroupPost::where('id',$post_id)->delete();
+        return $this->JsonResponse("Post Deleted Successfully",200);
+    }
     
 }

@@ -24,6 +24,7 @@ class StudentController extends Controller
     {
     
         $validator = Validator::make($request->all(), [
+            
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'birth_date' =>'required|string|date|before:today',
@@ -49,11 +50,13 @@ class StudentController extends Controller
           
        if($request->hasFile("profile_image")){
         $path = $request->profile_image->store('profile_images','public');
+        $profile_image_url = '/storage/' . $path;
        }
-       $profile_image_url = '/storage/' . $path;
+     
+       
        
         $user = Student::create([
-            
+            'id' => Auth::user()->id,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'birth_date' => $request->birth_date,

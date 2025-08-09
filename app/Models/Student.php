@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Student extends Model
 {
+    public $incrementing = false;
       protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'email',

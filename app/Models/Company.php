@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Company extends Model
 {
     use HasFactory;
+    public $incrementing = false;
 
     protected $fillable = [
+        'id',
         'company_name',
         'description',
         'email',

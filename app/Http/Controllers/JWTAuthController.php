@@ -28,6 +28,7 @@ class JWTAuthController extends Controller
        }
        $profile_image_url = '/storage/' . $path;
        Company::create([
+        'id' => Auth::user()->id,
         'company_name' => $request->company_name,
         "logo_url" => $profile_image_url
        ]);
