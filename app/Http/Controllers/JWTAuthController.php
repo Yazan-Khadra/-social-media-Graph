@@ -30,7 +30,8 @@ class JWTAuthController extends Controller
        Company::create([
         'id' => Auth::user()->id,
         'company_name' => $request->company_name,
-        "logo_url" => $profile_image_url
+        "logo_url" => $profile_image_url,
+        'user_id' => Auth::user()->id
        ]);
        return $this->JsonResponse("company created succsefully",201);
     }

@@ -18,7 +18,8 @@ class Company extends Model
         'email',
         'social_links',
         'mobile_number',
-        'logo_url'
+        'logo_url',
+        'user_id'
     ];
 
     protected $casts = [
