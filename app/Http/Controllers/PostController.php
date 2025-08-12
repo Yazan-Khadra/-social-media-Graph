@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostsResource;
 use App\JsonResponseTrait;
 use App\Models\Post;
@@ -172,6 +173,13 @@ $posts = Post::where(function($query) use ($followingIds) {
 
     $post->save();
     return $this->JsonResponse("updated successfully",202);
+    }
+    public function Get_Post_comments($post_id) {
+        $post = Post::where('id',$post_id)->get()->first();
+        $comments = $post->Comments;
+        return CommentResource::collection($comments);
+        
+
     }
 }
 
