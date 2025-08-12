@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupPostController;
 use App\Http\Controllers\JWTAuthController;
@@ -23,6 +24,7 @@ Route::controller(JWTAuthController::class)->group(function() {
     Route::post('/user/login','login');
     Route::middleware('Token')->group(function() {
         Route::post('Register','register');
+        Route::post('/role/set','set_role');
         Route::post('/company/register','company_register');
     });
    
@@ -166,4 +168,11 @@ Route::controller(FreelancerPostController::class)->group(function() {
         Route::put('/freelancer-posts/update/{id}', 'update_post');
         Route::delete('/freelancer-posts/delete/{id}', 'delete_post');
     });
+   
+    
 });
+ Route::controller(CommentController::class)->group(function() {
+        Route::middleware('Token')->group(function() {
+            Route::post('/comment/make','make_comment');
+        });
+    }); 

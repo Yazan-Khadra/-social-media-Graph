@@ -24,4 +24,7 @@ class Post extends Model
     public function Project() {
         return $this->belongsTo(Project::class,'project_id');
     }
+    public function Comments() {
+        return $this->hasMany(Comment::class,'post_id');
+    }
 }

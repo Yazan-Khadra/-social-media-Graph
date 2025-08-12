@@ -49,17 +49,24 @@ class JWTAuthController extends Controller
             "email" => $request->email !==null ? $request->email : null,
             "mobile_number" =>$request->mobile_number !==null ? $request->mobile_number : null,
             'password' => Hash::make($request->password),
-            'role'=>$request->role,
         ]);
         $token = JWTAuth::fromUser($user);
         $response = [
             "id" => $user->id,
-            'role' => $user->role,
             "message" =>"registeration done successfully",
             "token" => $token,
         ];
         return $this->JsonResponse($response,201);
 
+    }
+    public function Set_role(Request $request) {
+        $validation = Validator::make($request->all(),[
+            'role' => 'required'
+        ]);
+        User::where('id',Auth::user()->id)->update([
+            'role' => $request->role,
+        ]);
+        return $this->JsonResponse("added successfully",200);
     }
     public function register(Request $request)
     {

@@ -24,6 +24,7 @@ class UserInfoResource extends JsonResource
             $major = Major::where('id',$this->major_id)->pluck("major_name");
         }
         return [
+            'id' => $this->id,
             "name" => $this->first_name . " " . $this->last_name,
             "year" => $year[0],
             "major" =>$major[0],

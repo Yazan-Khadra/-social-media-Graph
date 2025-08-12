@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('mobile_number')->nullable();
             $table->string('social_links')->nullable();
             $table->string('logo_url')->nullable();
+            $table->foreignId("user_id")->references("id")->on("users")->onDelete("cascade");
+
             $table->timestamps();
         });
     }
