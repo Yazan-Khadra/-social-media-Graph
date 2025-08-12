@@ -38,12 +38,13 @@ class GroupController extends Controller
         // Check if the user is already an admin of a group for this project
         $adminGroup = Group::where('admin_id', $user->id)
             ->where('project_id', $request->project_id)
-            ->first();
+           -> get()->first();
+          
 
         if ($adminGroup) {
             return $this->JsonResponse("You are already an admin of group " . $adminGroup->group_name . " for this project.", 400);
         }
-
+        
         // Create the group
         $group = Group::create([
             'group_name' => $request->group_name,
@@ -55,6 +56,7 @@ class GroupController extends Controller
             'group_id'=>$group->id,
             'project_id'=>$request->project_id,
             'is_admin'=>1,
+            'skill_id'=>$request->skill_id
         ]);
         return $this->JsonResponse("Group created successfully", 201);
     }
@@ -76,6 +78,7 @@ class GroupController extends Controller
         
         
         // Check if the user is the admin of the group for this project
+       
         if ($group->admin_id !== Auth::user()->id || $group->project_id != $request->project_id) {
             return $this->JsonResponse("Only the group admin for this project can send invitations", 403);
         }
@@ -112,13 +115,14 @@ class GroupController extends Controller
             'group_id' => $request->groupId,
             'student_id' => $request->user_id,
             'status' => 'pending',
-            'project_id' => $request->project_id
+            'project_id' => $request->project_id,
+            'skill_id' => $request->skill_id,
         ]);
 
         return $this->JsonResponse("Invitation sent successfully", 201);
     }
 
-    public function respondToInvitation(Request $request, $invitationId)
+    public function respondToInvitation(Request $request)
     {
         try{
         $validator = Validator::make($request->all(), [
@@ -129,7 +133,7 @@ class GroupController extends Controller
             return $this->JsonResponse($validator->errors(), 422);
         }
 
-        $invitation = GroupInvitation::findOrFail($invitationId);
+        $invitation = GroupInvitation::findOrFail($request->invitation_id);
         
 
         if ($request->response === 'accept') {
@@ -142,7 +146,8 @@ class GroupController extends Controller
             GroupStudentProject::create([
                 'student_id' => Auth::user()->id,
                 'project_id' => $invitation->project_id,
-                'group_id' => $invitation->group_id
+                'group_id' => $invitation->group_id,
+                'skill_id' => $request->skill_id
             ]);
 
             // Update invitation status
@@ -211,7 +216,14 @@ class GroupController extends Controller
 public function GetGroupMember($id){
     $group=Group::findOrFail($id);
     $members = $group->members;
+    
     return GroupMembersResource::collection($members);
+}
+public function Leave_Group($group_id) {
+    GroupStudentProject::where("group_id",$group_id)
+    ->where('student_id',Auth::user()->id)
+    ->delete();
+    return $this->JsonResponse("you leave the group successfully",200);
 }
 
 }

@@ -10,7 +10,8 @@ class GroupInvitation extends Model
         'group_id',
         'student_id',
         'status',
-        'project_id'
+        'project_id',
+        'skill_id'
     ];
 
     public function group()

@@ -15,35 +15,41 @@ class GroupPostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $skills = [];
+        $members = [];
         foreach($this->skills as $skill ){
-        $skills = [
+        $skills[] = [
             "id" => $skill->id,
             "name" => $skill->name,
             "logo_url" => $skill->logo_url,
             
         ];
     }
-    foreach($this->members as $member){
-        $member = [
-            "id" => $this->id,
-            "name" => $this->first_name + " " + $this->last_name,
-            "profile_image_url" => $this-> profile_image_url,
-            "is_admin" => $this->pivot->is_admin,
+    
+    foreach($this->Group->members as $member){
+        $members[] = [
+            "id" => $member->id,
+            "name" => $member->first_name . " " . $member->last_name,
+            "profile_image_url" => $member-> profile_image_url,
+            "is_admin" => $member->pivot->is_admin,
         ];
     }
-    $project = Project::where('id',$this->group->id)->pluck("name");
+    $project = Project::where('id',$this->group->id)->get()->first();
     $group = [
-        "id" => $this->group->id,
-        "group_name" => $this->group_name,
-        "project" => $project
+        "id" => $this->Group->id,
+        "group_name" => $this->Group->group_name,
+        'project_id' => $project->id,
+        "project" => $project->name
     ];
-//baraa alkobaisi
+
+
+
         return [
             'id' => $this->id,
             "description" => $this->description,
             "group" => $group,
             "skills" => $skills,
-            "group_members" => $member,
+            "group_members" => $members,
         ];
     }
 }

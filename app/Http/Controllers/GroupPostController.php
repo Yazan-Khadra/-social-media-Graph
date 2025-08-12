@@ -28,7 +28,7 @@ class GroupPostController extends Controller
             "admin_id" => $request->admin_id,
             "group_id" => $request->group_id,
             
-        ]);
+        ]); 
         $post->skills()->attach($request->skills_id);
         return $this->JsonResponse("data added sccessfully",200);
     } catch (\Exception $e) {
@@ -45,6 +45,10 @@ class GroupPostController extends Controller
             'group.members',
         ])->get();
         return GroupPostResource::collection($posts);
+    }
+    public function Delete_Post($post_id) {
+        GroupPost::where('id',$post_id)->delete();
+        return $this->JsonResponse("Post Deleted Successfully",200);
     }
     
 }

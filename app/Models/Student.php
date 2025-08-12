@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Student extends Model
 {
+    public $incrementing = false;
       protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'email',
@@ -60,7 +62,7 @@ public function year(): BelongsTo
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class,'group_student_project','student_id')->withPivot('is_admin');
+        return $this->belongsToMany(Group::class,'group_student_project','student_id')->withPivot(['is_admin','skill_id']);
     }
 
 

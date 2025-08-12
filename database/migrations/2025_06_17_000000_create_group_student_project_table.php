@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->boolean('is_admin')->default(false);
+            $table->foreignId("skill_id")->references('id')->on("skills")->onDelete("cascade");
             $table->unique(['student_id', 'project_id']);
         });
     }

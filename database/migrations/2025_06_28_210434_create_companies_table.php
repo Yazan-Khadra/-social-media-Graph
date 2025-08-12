@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('companies', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id')->primary();
+
             $table->string('company_name');
             $table->string('description')->nullable();
-            $table->string('email')->unique();
             $table->string('mobile_number')->nullable();
             $table->string('social_links')->nullable();
             $table->string('logo_url')->nullable();

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
            
             // role
-            $table->string('role')->default("student");
+            $table->string('role');
             $table->timestamp('email_verified_at')->nullable();
 
             $table->rememberToken();

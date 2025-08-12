@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("description");
             $table->foreignId("admin_id")->references("id")->on("students");
             $table->foreignId('group_id')->references('id')->on('groups')->onDelete('cascade');
+            
         });
     }
 
