@@ -37,8 +37,7 @@ class JWTAuthController extends Controller
     }
     public function Register_Auth(Request $request) {
         $validator = Validator::make($request->all(),[
-            'email' => 'required_if:mobile_number,null|email|max:255|unique:users',
-            'mobile_number' => 'required_if:email,null|numeric|regex:/^09\d{8}$/|unique:users',
+            'email' => 'email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'confirm_password' => 'required|same:password',
         ]);
@@ -47,8 +46,7 @@ class JWTAuthController extends Controller
         }
         
         $user= User::create([
-            "email" => $request->email !==null ? $request->email : null,
-            "mobile_number" =>$request->mobile_number !==null ? $request->mobile_number : null,
+            "email" => $request->email,
             'password' => Hash::make($request->password),
         ]);
         $token = JWTAuth::fromUser($user);
@@ -125,14 +123,13 @@ class JWTAuthController extends Controller
     // User login
     public function login(Request $request){
              $validation = Validator::make($request->all(),[
-            "email" => 'required_if:mobile_number,null|email|string|max:255',
-            "mobile_number" => 'required_if:email,null|numeric|regex:/^09\d{8}$/',
+            "email" => 'required|email|string|max:255',
             "password" =>"required",
         ]);
         if($validation->fails()) {
             return response()->json($validation->errors(),422);
         }
-         !empty($request->email) ? $credentials = $request->only('email', 'password') : $credentials = $request->only('mobile_number', 'password');
+         $credentials = $request->only('email', 'password');
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {

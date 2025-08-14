@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FollowersfollowingResource;
 use App\Http\Resources\UserInfoResource;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -39,21 +41,22 @@ class FollowController extends Controller
     // قائمة المتابعين
     public function followers()
     {
-        $user = Student::findOrFail(Auth::user()->id);
+        $user = User::findOrFail(Auth::user()->id);
      
-        $followers = $user->User->followers->Student;
-
-        return UserInfoResource::collection($followers);
+        $followers = $user->followers;
+         return  FollowersfollowingResource::Collection($followers);
+        
     }
 
     // قائمة المتابعين الذين يتابعهم المستخدم
     public function followings()
     {
-        $user = Student::findOrFail(Auth::user()->id);
+        $user = User::findOrFail(Auth::user()->id);
      
-        $followings = $user->User->followings;
+        $followings = $user->followings;
+       return  FollowersfollowingResource::Collection($followings);
 
-        return response()->json($followings);
+        
     }
 }
 

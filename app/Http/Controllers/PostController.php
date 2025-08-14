@@ -92,10 +92,10 @@ class PostController extends Controller
 //     $query->select('id','first_name', 'last_name')
 //     ; // Must include 'id' to maintain relation    
 // }])->get();
-$student = Student::findOrFail($id);
+$user = User::findOrFail(id: $id);
 
-  $followingIds = $student->User->followings->pluck('users.id');
-  $followingIds->add($student->id);
+  $followingIds = $user->followings->pluck('users.id');
+  $followingIds->add($user->id);
 
 $posts = Post::where(function($query) use ($followingIds) {
         $query->where('privacy', 'public')
@@ -174,12 +174,6 @@ $posts = Post::where(function($query) use ($followingIds) {
     $post->save();
     return $this->JsonResponse("updated successfully",202);
     }
-    public function Get_Post_comments($post_id) {
-        $post = Post::where('id',$post_id)->get()->first();
-        $comments = $post->Comments;
-        return CommentResource::collection($comments);
-        
-
-    }
+  
 }
 

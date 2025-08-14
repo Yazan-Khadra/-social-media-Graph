@@ -77,4 +77,7 @@ public function followings()
     public function Company() {
         return $this->hasOne(Company::class,'user_id');
     }
+    public function Staff() {
+        return $this->hasOne(AcademicStaff::class,'user_id');
+    }
 }
