@@ -27,4 +27,7 @@ class Post extends Model
     public function Comments() {
         return $this->hasMany(Comment::class,'post_id');
     }
+    public function Reactions() {
+        return $this->belongsToMany(Reaction::class,'reactions_posts_pivot','post_id','reaction_id');
+    }
 }

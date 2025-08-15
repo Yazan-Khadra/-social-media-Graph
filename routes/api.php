@@ -15,8 +15,10 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FreelancerPostController;
 use App\Http\Controllers\GroupApllayController;
+use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\StudentController;
 use App\Models\GroupApllay;
+use App\Models\Reaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -187,3 +189,11 @@ Route::controller(FreelancerPostController::class)->group(function() {
         Route::delete('commentResponse/delete/{response_id}','Delete_Response');
         Route::post('comment/update','Update_Response');
     });
+Route::controller(ReactionController::class)->group(function() {
+    Route::middleware('Token')->group(function() {
+        Route::post('reaction/make','Make_Reaction');
+        Route::post('reaction/update','Update_Reaction');
+        Route::delete('reaction/delete/{post_id}','Remove_Reaction');
+        Route::get('reaction/get/{post_id}','Get_Post_reactions');
+    });
+});

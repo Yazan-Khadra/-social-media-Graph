@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Reaction extends Model
 {
     protected $fillable = [
-        'love',
-        'support',
-        'laugh',
-        'useless'
+        'reaction'
     ];
 }
