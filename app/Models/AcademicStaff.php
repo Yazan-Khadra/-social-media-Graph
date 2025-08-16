@@ -13,14 +13,12 @@ class AcademicStaff extends Model
     protected $fillable = [
         'first_name',
         'last_name',
-        'email',
-        'mobile_number',
-        'password',
         'profile_image',
         'gender',
         'birth_date',
         'bio',
         'social_links',
+        'user_id'
     ];
 
     protected $casts = [

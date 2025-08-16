@@ -47,11 +47,12 @@ class StudentController extends Controller
             return response()->json($validator->errors(), 422);
         }
           //    check if the profile image is send
-          
+          $profile_image_url = null;
        if($request->hasFile("profile_image")){
         $path = $request->profile_image->store('profile_images','public');
-        $profile_image_url = '/storage/' . $path;
+         $profile_image_url = '/storage/' . $path;
        }
+      
      
        
        

@@ -15,6 +15,7 @@ class PostsResource extends JsonResource
     public function toArray(Request $request): array
     {
           $timeAgo = $this->created_at ? $this->created_at->diffForHumans() : null;
+          $reactions_count = $this->Reactions->count();
          $users = $this->Students->map(function ($user){
             return [
                 
@@ -31,7 +32,8 @@ class PostsResource extends JsonResource
                 'files' => $this->files?:null,
                 'users' => $users,
                 'privacy' =>$this->privacy, 
-                'created_at' =>$timeAgo
+                'created_at' =>$timeAgo,
+                'reactions_count' => $reactions_count
                 
             ];
         }
@@ -44,6 +46,7 @@ class PostsResource extends JsonResource
             'project' => $project,
             'users' => $users,
             'created_at' => $timeAgo,
+            'reactions_count' => $reactions_count
         ];
     }
 }

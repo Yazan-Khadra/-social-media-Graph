@@ -24,10 +24,16 @@ class Post extends Model
     public function Project() {
         return $this->belongsTo(Project::class,'project_id');
     }
+    public function Comments() {
+        return $this->hasMany(Comment::class,'post_id');
+    }
+    public function Reactions() {
+        return $this->belongsToMany(Reaction::class,'reactions_posts_pivot','post_id','reaction_id');
+    }
     //hashtags
     public function hashtags()
-{
+    {
     return $this->belongsToMany(Hashtag::class);
-}
+    }
 
 }

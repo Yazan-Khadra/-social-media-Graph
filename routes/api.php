@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentResponsesController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupPostController;
 use App\Http\Controllers\JWTAuthController;
@@ -13,8 +15,10 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FreelancerPostController;
 use App\Http\Controllers\GroupApllayController;
+use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\StudentController;
 use App\Models\GroupApllay;
+use App\Models\Reaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +27,7 @@ Route::controller(JWTAuthController::class)->group(function() {
     Route::post('/user/login','login');
     Route::middleware('Token')->group(function() {
         Route::post('Register','register');
+        Route::post('/role/set','set_role');
         Route::post('/company/register','company_register');
     });
    
@@ -165,5 +170,30 @@ Route::controller(FreelancerPostController::class)->group(function() {
         Route::post('/freelancer-posts/add', 'add_post');
         Route::put('/freelancer-posts/update/{id}', 'update_post');
         Route::delete('/freelancer-posts/delete/{id}', 'delete_post');
+    });
+   
+    
+});
+ Route::controller(CommentController::class)->group(function() {
+        Route::middleware('Token')->group(function() {
+            Route::post('/comment/make','make_comment');
+        });
+        Route::get('/post/comment/get/{post_id}','Get_Post_comments');
+        Route::delete('comment/delete/{comment_id}','Delete_Comment');
+        Route::post('comment/update','Update_Comment');
+    }); 
+    Route::controller(CommentResponsesController::class)->group(function() {
+        Route::middleware('Token')->group(function() {
+            Route::post('comment/response','Response_To_Comment');
+        });
+        Route::delete('commentResponse/delete/{response_id}','Delete_Response');
+        Route::post('comment/update','Update_Response');
+    });
+Route::controller(ReactionController::class)->group(function() {
+    Route::middleware('Token')->group(function() {
+        Route::post('reaction/make','Make_Reaction');
+        Route::post('reaction/update','Update_Reaction');
+        Route::delete('reaction/delete/{post_id}','Remove_Reaction');
+        Route::get('reaction/get/{post_id}','Get_Post_reactions');
     });
 });

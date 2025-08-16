@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostsResource;
 use App\JsonResponseTrait;
 use App\Models\Post;
@@ -99,10 +100,10 @@ class PostController extends Controller
 //     $query->select('id','first_name', 'last_name')
 //     ; // Must include 'id' to maintain relation
 // }])->get();
-$student = Student::findOrFail($id);
+$user = User::findOrFail(id: $id);
 
-  $followingIds = $student->User->followings->pluck('users.id');
-  $followingIds->add($student->id);
+  $followingIds = $user->followings->pluck('users.id');
+  $followingIds->add($user->id);
 
 $posts = Post::where(function($query) use ($followingIds) {
         $query->where('privacy', 'public')
@@ -219,6 +220,7 @@ $posts = Post::where(function($query) use ($followingIds) {
 
         return response()->json($result);
     }
+
 
 
 }
