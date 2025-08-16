@@ -24,4 +24,10 @@ class Post extends Model
     public function Project() {
         return $this->belongsTo(Project::class,'project_id');
     }
+    //hashtags
+    public function hashtags()
+{
+    return $this->belongsToMany(Hashtag::class);
+}
+
 }
