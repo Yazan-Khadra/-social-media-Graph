@@ -20,10 +20,8 @@ class DatabaseSeeder extends Seeder
         MajorSeeder::class,
         UserSeeder::class,
         ProjectSeeder::class,
-        GroupSeeder::class,
-        CompanySeeder::class,
         JobTypeSeeder::class,
         WorkPlaceSeeder::class,
-        FreelancerPostSeeder::class
+        
     ]);
 }}
