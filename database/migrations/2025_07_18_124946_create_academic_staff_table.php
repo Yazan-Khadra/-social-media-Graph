@@ -19,10 +19,7 @@ return new class extends Migration
             $table->string('mobile_number')->nullable();
             $table->string('password');
             $table->string('profile_image')->nullable();
-            $table->string('gender')->nullable();
-            $table->date('birth_date')->nullable();
             $table->text('bio')->nullable();
-            $table->json('social_links')->nullable();
             $table->timestamps();
         });
     }

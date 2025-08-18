@@ -14,16 +14,12 @@ class AcademicStaff extends Model
         'first_name',
         'last_name',
         'profile_image',
-        'gender',
-        'birth_date',
         'bio',
-        'social_links',
         'user_id'
     ];
 
     protected $casts = [
-        "social_links" => "array",
-        "links" => "array",
+        "links" => "array"
     ];
 
 

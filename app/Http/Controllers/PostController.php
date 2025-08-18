@@ -30,6 +30,8 @@ class PostController extends Controller
             'files' => 'array',
             'title' =>'string|max:1500',
             'privacy' => 'required|in:public,followers',
+            'hashtags' => 'array',
+            'hashtags.*' => 'string|max:50',
         ]);
         if($validation->fails()) {
             return $this->JsonResponse($validation->errors(),422);
@@ -52,7 +54,7 @@ class PostController extends Controller
     //    append the data on the post table
        $post = Post::create([
             'description' => $request->description,
-            'files' => $files?:null,
+            'files' => $files,
             'title' =>$request->title?:null,
             'project_id' =>$request->project_id?:null,
             'privacy' =>$request->privacy =="public"?"public" :"followers",
@@ -67,11 +69,12 @@ class PostController extends Controller
         else {
             $users = [$user->id];
         }
-        // hashtag of the post
-        $hashtags = $this->extractHashtags($request->description);
-        foreach ($hashtags as $tagName) {
-            $hashtag = \App\Models\Hashtag::firstOrCreate(['name' => $tagName]);
-            $post->hashtags()->syncWithoutDetaching($hashtag->id);
+        // Get hashtags from separate input (not from description)
+        $hashtags = $request->input('hashtags', []);
+
+        // Validate hashtags
+        if (!is_array($hashtags)) {
+            $hashtags = [];
         }
 
         // make array_map to avoid the database heigh load
@@ -85,6 +88,16 @@ class PostController extends Controller
         },$users);
         // just one request to the database
        DB::table('_posts__users__pivot')->insert($users_list);
+
+        // Now link hashtags to the post (after post is saved)
+        foreach ($hashtags as $tagName) {
+            // Remove # if user included it
+            $cleanTag = ltrim($tagName, '#');
+            if (!empty($cleanTag)) {
+                $hashtag = Hashtag::firstOrCreate(['name' => mb_strtolower($cleanTag)]);
+                $post->hashtags()->attach($hashtag->id);
+            }
+        }
 
         return $this->JsonResponse("post created Sucsessfuly",201);
      }
@@ -150,6 +163,8 @@ $posts = Post::where(function($query) use ($followingIds) {
     public function Update_Post(Request $request) {
         $validation = Validator::make($request->all(),[
             'description' =>'string',
+            'hashtags' => 'array',
+            'hashtags.*' => 'string|max:50',
         ]);
         if($validation->fails()){
             return $this->JsonResponse($validation->errors(),422);
@@ -177,14 +192,25 @@ $posts = Post::where(function($query) use ($followingIds) {
         //update the bio
         $post->description = $request->description;
     }
-    //delete the old hashtag
+    //delete the old hashtags
     $post->hashtags()->detach();
-    $hashtags = $this->extractHashtags($request->description);
+
+    // Get hashtags from separate input (same as Create_Post)
+    $hashtags = $request->input('hashtags', []);
+
+    // Validate hashtags
+    if (!is_array($hashtags)) {
+        $hashtags = [];
+    }
+
+    // Link new hashtags to the post
     foreach ($hashtags as $tagName) {
-        $hashtag = Hashtag::firstOrCreate([
-            'name' => mb_strtolower($tagName),
-        ]);
-        $post->hashtags()->attach($hashtag->id);
+        // Remove # if user included it
+        $cleanTag = ltrim($tagName, '#');
+        if (!empty($cleanTag)) {
+            $hashtag = Hashtag::firstOrCreate(['name' => mb_strtolower($cleanTag)]);
+            $post->hashtags()->attach($hashtag->id);
+        }
     }
 
 
@@ -195,7 +221,7 @@ $posts = Post::where(function($query) use ($followingIds) {
     //hashtag
     private function extractHashtags(string $text): array
     {
-        preg_match_all('/#([\p{Arabic}\p{Latin}0-9_]+)/u', $text, $matches);
+        preg_match_all('/#([\p{Arabic}\p{Latin}][\p{Arabic}\p{Latin}0-9_]*)/u', $text, $matches);
         return array_unique(array_map('mb_strtolower', $matches[1]));
     }
 
@@ -219,6 +245,39 @@ $posts = Post::where(function($query) use ($followingIds) {
         });
 
         return response()->json($result);
+    }
+
+    public function searchHashtags(Request $request)
+    {
+        $query = $request->input('query', '');
+
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        // Find hashtags that match 
+        $existingHashtags = Hashtag::where('name', 'like', '%' . mb_strtolower($query) . '%')
+            ->orderBy('name')
+            ->limit(15)
+            ->get();
+
+        // If hashtags found, return them
+        if ($existingHashtags->count() > 0) {
+            return response()->json([
+                'hashtags' => $existingHashtags->pluck('name'),
+                'found' => true,
+                'message' => 'Found existing hashtags'
+            ]);
+        }
+
+        // If no hashtags found, create a new one
+        $newHashtag = Hashtag::create(['name' => mb_strtolower($query)]);
+        return response()->json([
+            'hashtags' => [$newHashtag->name],
+            'found' => false,
+            'created' => true,
+            'message' => 'New hashtag created'
+        ]);
     }
 
 

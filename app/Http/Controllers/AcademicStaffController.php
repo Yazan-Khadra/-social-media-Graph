@@ -53,42 +53,7 @@ class AcademicStaffController extends Controller
         return $this->JsonResponse('Academic staff information added successfully', 201);
     }
 
-    public function set_social_links(Request $request)
-    {
-        $user = Auth::user();
-        $validation = Validator::make($request->all(), [
-            'links' => 'array',
-        ]);
-        if ($validation->fails()) {
-            return $this->JsonResponse($validation->errors(), 422);
-        }
-        $staff = AcademicStaff::where('email', $user->email)->first();
-        if (!$staff) {
-            return $this->JsonResponse('Academic staff not found. Please create info first.', 404);
-        }
-        $staff->social_links = $request->links;
-        $staff->save();
-        return $this->JsonResponse('Social links added successfully', 201);
-    }
-
-    public function update_social_links(Request $request)
-    {
-        $user = Auth::user();
-        $validation = Validator::make($request->all(), [
-            'links' => 'array',
-        ]);
-        if ($validation->fails()) {
-            return $this->JsonResponse($validation->errors(), 422);
-        }
-        $staff = AcademicStaff::where('email', $user->email)->first();
-        if (!$staff) {
-            return $this->JsonResponse('Academic staff not found. Please create info first.', 404);
-        }
-        $staff->social_links = $request->links;
-        $staff->save();
-        return $this->JsonResponse('Social links updated successfully', 200);
-    }
-
+   
     // Update academic staff info for authenticated user
     public function update_academic_staff_info(Request $request)
     {
