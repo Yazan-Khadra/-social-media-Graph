@@ -55,6 +55,7 @@ class PostController extends Controller
             'title' =>$request->title?:null,
             'project_id' =>$request->project_id?:null,
             'privacy' =>$request->privacy =="public"?"public" :"followers",
+            'admin_id' => Auth::user()->id
 
         ]);
         // check if the post is tags with many users

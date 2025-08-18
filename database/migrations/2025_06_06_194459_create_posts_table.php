@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string("description");
-            $table->json('files');
+            $table->json('files')->nullable();
             $table->string("title")->nullable();
              $table->enum('privacy', ['public', 'followers', 'private'])->default('public');
+             $table->foreignId('admin_id')->references('id')->on('students')->onDelete('cascade');
             $table->foreignId("project_id")
             ->nullable()
             ->references("id")->on("projects")

@@ -11,7 +11,8 @@ class Post extends Model
         'description',
         'project_id',
         'title',
-        'privacy'
+        'privacy',
+        'admin_id'
     ];
     protected $casts = [
         'files' => 'array'

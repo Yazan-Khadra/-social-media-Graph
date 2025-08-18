@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostsResource;
+use App\Http\Resources\SearchStudentResource;
 use App\Http\Resources\UserInfoResource;
 use App\JsonResponseTrait;
 use App\Models\Post;
@@ -261,18 +262,36 @@ class StudentController extends Controller
             ], 500);
         }
     }
-    public function Get_User_Profile_Info() {
+    public function Get_User_Profile_Info($id) {
         
-        $student_info=Student::findOrFail(Auth::user()->id);
+        $student_info=Student::findOrFail($id);
+       
         
         return UserInfoResource::make($student_info);
     }
     public function Get_User_post($id) {
-        $student = Student::where('id',$id)->get()->first();
-        
-        $student_post = $student->Posts;
-        // return $this->JsonResponse($student_post,200);
-        
-        return PostsResource::collection($student_post);
+      $student = Student::findOrFail($id);
+
+$student_posts = $student->posts()->orderBy('created_at', 'desc')->get();
+
+return PostsResource::collection($student_posts);
+
+    }
+   public function search(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'name' => 'required|string'
+        ]);
+
+        if ($validation->fails()) {
+            return $this->JsonResponse($validation->errors(), 400);
+        }
+
+        $name = $request->input('name');
+        $students = Student::where('first_name', 'LIKE', "%{$name}%")
+                           ->orWhere('last_name', 'LIKE', "%{$name}%")
+                           ->get();
+
+        return SearchStudentResource::collection($students);
     }
 }

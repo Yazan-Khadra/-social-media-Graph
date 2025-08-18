@@ -26,8 +26,8 @@ class UserInfoResource extends JsonResource
         return [
             'id' => $this->id,
             "name" => $this->first_name . " " . $this->last_name,
-            "year" => $year[0],
-            "major" =>$major[0],
+            "year" => $year,
+            "major" =>$major,
             "bio" => $this->bio,
             "gender" => $this->gender,
             "cv" => $this->cv_url,

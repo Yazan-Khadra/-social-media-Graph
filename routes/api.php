@@ -47,7 +47,7 @@ Route::controller(StudentController::class)->group(function() {
     });
         //get user informations
         
-        Route::get('/user/info',"Get_User_Profile_Info");
+       
         //fill the user informatons
         Route::post("/fill/user/info","Fill_Profile_Info");
         // add social links
@@ -64,10 +64,14 @@ Route::controller(StudentController::class)->group(function() {
         Route::delete('/student/profile-image/delete', "Delete_Profile_Image");
         //get users post 
         Route::get('/user/posts/{id}','Get_User_Post');
+        // find student
+       
 
 
 
     });
+     Route::get('/user/info/{id}',"Get_User_Profile_Info");
+     Route::post('student/find','search');
 
 });
 Route::controller(SkillController::class)->group(function(){

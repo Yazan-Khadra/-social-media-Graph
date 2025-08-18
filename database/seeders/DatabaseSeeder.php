@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         ProjectSeeder::class,
         JobTypeSeeder::class,
         WorkPlaceSeeder::class,
+        ReactionSeeder::class
         
     ]);
 }}
