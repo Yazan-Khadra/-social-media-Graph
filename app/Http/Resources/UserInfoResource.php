@@ -31,7 +31,7 @@ class UserInfoResource extends JsonResource
             "bio" => $this->bio,
             "gender" => $this->gender,
             "cv" => $this->cv_url,
-            "image" => $this->profile_image_url,
+            "image" => 'http://127.0.0.1:8000/api'.$this->profile_image_url,
             "social_links" => $this->social_links,
             "rate" => $this->rate,
             "skills" => $this->skills,

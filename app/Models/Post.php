@@ -31,4 +31,10 @@ class Post extends Model
     public function Reactions() {
         return $this->belongsToMany(Reaction::class,'reactions_posts_pivot','post_id','reaction_id');
     }
+    //hashtags
+    public function hashtags()
+    {
+    return $this->belongsToMany(Hashtag::class, 'hashtag_post');
+    }
+
 }

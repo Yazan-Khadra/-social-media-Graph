@@ -26,7 +26,7 @@ class CommentResource extends JsonResource
                       "user" => [
                 "user_id" => $user_comment_info->id,
                 "name" => $user_comment_info->first_name ." " . $user_comment_info->last_name,
-                "image_url" => $user_comment_info->profile_image_url,
+                "image_url" => 'http://127.0.0.1:8000/api'.$user_comment_info->profile_image_url,
                 
             ],
             
@@ -40,7 +40,7 @@ class CommentResource extends JsonResource
             "user" => [
                 "user_id" => $user_comment_info->id,
                 "name" => $user_comment_info->company_name,
-                "image_url" => $user_comment_info->logo_url,
+                "image_url" => 'http://127.0.0.1:8000/api'.$user_comment_info->logo_url,
             ]
         ];
         }
@@ -52,7 +52,7 @@ class CommentResource extends JsonResource
                       "user" => [
                 "user_id" => $user_comment_info->id,
                 "name" => $user_comment_info->first_name ." " . $user_comment_info->last_name,
-                "image_url" => $user_comment_info->profile_image_url,
+                "image_url" => 'http://127.0.0.1:8000/api'.$user_comment_info->profile_image_url,
                 
             ],
         ];
@@ -69,7 +69,7 @@ class CommentResource extends JsonResource
             "user" => [
                 "user_id" => $user_info->id,
                 "name" => $user_info->first_name ." " . $user_info->last_name,
-                "image_url" => $user_info->profile_image_url,
+                "image_url" => 'http://127.0.0.1:8000/api'.$user_info->profile_image_url,
                 "role" => $user->role,
             ],
             'responses' =>$responses_data
@@ -84,7 +84,7 @@ class CommentResource extends JsonResource
             "user" => [
                 "user_id" => $user_info->id,
                 "name" => $user_info->company_name,
-                "image_url" => $user_info->logo_url,
+                "image_url" => 'http://127.0.0.1:8000/api'.$user_info->logo_url,
                 "role" => $user->role,
             ],
             'responses' => $responses_data
@@ -98,7 +98,7 @@ class CommentResource extends JsonResource
             "user" => [
                 "user_id" => $user_info->id,
                 "name" => $user_info->first_name ." " . $user_info->last_name,
-                "image_url" => $user_info->profile_image_url,
+                "image_url" => 'http://127.0.0.1:8000/api'.$user_info->profile_image_url,
                 "role" => $user->role,
             ],
             'responses' =>$responses_data

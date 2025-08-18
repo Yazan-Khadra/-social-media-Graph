@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use App\Models\EmailOtp;
 
 
 class JWTAuthController extends Controller
@@ -35,29 +37,51 @@ class JWTAuthController extends Controller
        ]);
        return $this->JsonResponse("company created succsefully",201);
     }
-    public function Register_Auth(Request $request) {
-        $validator = Validator::make($request->all(),[
-            'email' => 'email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'confirm_password' => 'required|same:password',
-        ]);
-        if($validator->fails()) {
-            return $this->JsonResponse($validator->errors(),422);
-        }
-        
-        $user= User::create([
-            "email" => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-        $token = JWTAuth::fromUser($user);
-        $response = [
-            "id" => $user->id,
-            "message" =>"registeration done successfully",
-            "token" => $token,
-        ];
-        return $this->JsonResponse($response,201);
+ public function Register_Auth(Request $request) {
+    $validator = Validator::make($request->all(),[
+        'email' => 'email|max:255|unique:users',
+        'password' => 'required|string|min:6',
+        'confirm_password' => 'required|same:password',
+    ]);
 
+    if($validator->fails()) {
+        return $this->JsonResponse($validator->errors(),422);
     }
+    
+    // إنشاء المستخدم
+    $user = User::create([
+        "email" => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
+
+    // 🔹 إنشاء OTP وإرساله بالبريد
+
+//     $otp = rand(100000, 999999); // 6 أرقام
+
+//  EmailOtp::create([
+//         'user_id' => $user->id,
+//         'otp' => $otp,
+//         'expires_at' => Carbon::now()->addMinutes(10), // صلاحية 10 دقائق
+//     ]);
+
+//    Mail::raw("Your verification code is: $otp", function($message) use ($user) {
+//     $message->to($user->email)
+//             ->subject('Email Verification Code');
+// });
+
+
+    // إنشاء توكن JWT
+    $token = JWTAuth::fromUser($user);
+
+    $response = [
+        "id" => $user->id,
+        "message" => "registeration done successfully",
+        "token" => $token,
+    ];
+
+    return $this->JsonResponse($response,201);
+}
+
     public function Set_role(Request $request) {
         $validation = Validator::make($request->all(),[
             'role' => 'required'

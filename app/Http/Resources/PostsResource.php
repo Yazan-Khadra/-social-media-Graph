@@ -25,7 +25,7 @@ class PostsResource extends JsonResource
                 
                 'id' => $user->id,
                 'name' => $user->first_name ." ".  $user->last_name,
-                'profile_image_url' => $user->profile_image_url
+                'profile_image_url' => 'http://127.0.0.1:8000/api'.$user->profile_image_url
                 
             ];
          });

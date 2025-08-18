@@ -15,11 +15,15 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FreelancerPostController;
 use App\Http\Controllers\GroupApllayController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\StudentController;
 use App\Models\GroupApllay;
 use App\Models\Reaction;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(JWTAuthController::class)->group(function() {
@@ -30,7 +34,7 @@ Route::controller(JWTAuthController::class)->group(function() {
         Route::post('/role/set','set_role');
         Route::post('/company/register','company_register');
     });
-   
+
 
 }
 );
@@ -46,6 +50,8 @@ Route::controller(StudentController::class)->group(function() {
         Route::post('Register','register');
     });
         //get user informations
+
+        Route::get('/user/info',"Get_User_Profile_Info");
         
        
         //fill the user informatons
@@ -62,7 +68,7 @@ Route::controller(StudentController::class)->group(function() {
         Route::post('/student/prfile-photo/update','Update_Profile_Image');
         // delete profile image
         Route::delete('/student/profile-image/delete', "Delete_Profile_Image");
-        //get users post 
+        //get users post
         Route::get('/user/posts/{id}','Get_User_Post');
         // find student
        
@@ -114,8 +120,8 @@ Route::controller(GroupController::class)->group(function() {
         Route::get('/group/member/{id}','GetGroupMember');
         //leave group
         Route::get('group/leave/{group_id}', 'Leave_Group');
-            
-        
+
+
 
     });
 });
@@ -125,7 +131,7 @@ Route::controller(GroupApllayController::class)->group(function() {
     });
     Route::post("Applay/response",'Response_To_Applay_Request');
     Route::get("Applay/get/{group_id}","Get_Applay_Requests");
-    
+
 });
 
 Route::controller(CompanyController::class)->group(function() {
@@ -149,10 +155,11 @@ Route::controller(PostController::class)->group(function() {
     Route::middleware('Token')->group(function() {
         Route::post('posts/make','Create_Post');
         Route::delete('post/delete/{id}','Delete_Post');
-
+        Route::put('post/update','Update_Post');
+        Route::get('hashtags/search','searchHashtags');
     });
     Route::get('posts/all/{id}','Get_Posts');
-     Route::put('post/update','Update_Post');
+    Route::get('posts/hashtag/{hashtag}','getPostsByHashtag');
 
 
 });
@@ -162,7 +169,7 @@ Route::controller(GroupPostController::class)->group(function() {
     });
     Route::get('group/posts/get','Get_Groups_Posts');
     Route::delete("post/delete/{post_id}","Delete_Post");
-    
+
 });
 
 Route::controller(FreelancerPostController::class)->group(function() {
@@ -175,8 +182,8 @@ Route::controller(FreelancerPostController::class)->group(function() {
         Route::put('/freelancer-posts/update/{id}', 'update_post');
         Route::delete('/freelancer-posts/delete/{id}', 'delete_post');
     });
-   
-    
+
+
 });
  Route::controller(CommentController::class)->group(function() {
         Route::middleware('Token')->group(function() {
@@ -185,7 +192,7 @@ Route::controller(FreelancerPostController::class)->group(function() {
         Route::get('/post/comment/get/{post_id}','Get_Post_comments');
         Route::delete('comment/delete/{comment_id}','Delete_Comment');
         Route::post('comment/update','Update_Comment');
-    }); 
+    });
     Route::controller(CommentResponsesController::class)->group(function() {
         Route::middleware('Token')->group(function() {
             Route::post('comment/response','Response_To_Comment');
@@ -201,3 +208,36 @@ Route::controller(ReactionController::class)->group(function() {
         Route::get('reaction/get/{post_id}','Get_Post_reactions');
     });
 });
+
+// Notification routes
+Route::controller(NotificationController::class)->group(function() {
+    Route::middleware('Token')->group(function() {
+        Route::post('notifications/update-fcm-token', 'updateFCMToken');
+    });
+});
+
+
+Route::middleware('Token')->post('/email/verify-otp', function(Request $request) {
+    $request->validate([
+        'otp' => 'required|string',
+    ]);
+
+    $user = $request->user(); // أو Auth::user()، نفس الشيء إذا middleware موجود
+
+    $otpRecord = \App\Models\EmailOtp::where('user_id', $user->id)
+        ->where('otp', $request->otp)
+        ->where('expires_at', '>=', Carbon::now())
+        ->first();
+
+    if (!$otpRecord) {
+        return response()->json(['message' => 'Invalid or expired verification code'], 422);
+    }
+
+    $user->email_verified_at = now();
+    $user->save();
+
+    $otpRecord->delete(); // حذف OTP بعد التحقق
+
+    return response()->json(['message' => 'done successfully']);
+});
+

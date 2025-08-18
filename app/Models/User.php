@@ -12,8 +12,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\GroupStudentProject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject,MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -21,13 +22,14 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'mobile_number',
         'password',
-        'role'
+        'role',
+        'fcm_token'
     ];
 
 
     //each student belong to One year
 
- 
+
 
     public function getJWTIdentifier()
     {
@@ -49,11 +51,11 @@ public function followings()
 {
     return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
 }
-// user's post 
+// user's post
 // public function Posts() {
 //     return $this->belongsToMany(Post::class,"posts_users_pivot","user_id");
 // }
-    
+
 
 
 //     public function groups(): BelongsToMany

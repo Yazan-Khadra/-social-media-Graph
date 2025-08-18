@@ -34,7 +34,7 @@ class PendingInvitationResource extends JsonResource
             'skill' => [
                 "skill_id" => $skill->id,
                 'skill_name' => $skill->name,
-                "logo_url" => $skill->logo_url,
+                "logo_url" => 'http://127.0.0.1:8000/api'.$skill->logo_url,
             ],
 
         ];
