@@ -38,6 +38,11 @@ Route::controller(JWTAuthController::class)->group(function() {
 
 }
 );
+Route::controller(UserController::class)->group(function() {
+
+Route::get('get/user_profile/info','Side_info')->middleware('Token');
+    
+});
 Route::controller(ProjectController::class)->group(function(){
     Route::get('projects_list','show_projects');
     Route::post('add_project','add_project');

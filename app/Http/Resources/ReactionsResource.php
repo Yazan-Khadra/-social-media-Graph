@@ -21,7 +21,7 @@ class ReactionsResource extends JsonResource
             $user_data [] = [
                 'id' => $user_info->id,
                 'name' => $user_info->first_name . " " . $user_info->last_name,
-                'profile_image_url' => 'http://127.0.0.1:8000/api'.$user_info->profile_image_url,
+                'profile_image_url' => 'http://127.0.0.1:8000'.$user_info->profile_image_url,
                 'role' => $this->user->role
             ];
         }
@@ -30,7 +30,7 @@ class ReactionsResource extends JsonResource
               $user_data [] = [
                 'id' => $user_info->id,
                 'name' => $user_info->name,
-                'profile_image_url' => 'http://127.0.0.1:8000/api'.$user_info->logo_url,
+                'profile_image_url' => 'http://127.0.0.1:8000'.$user_info->logo_url,
                 'role' => $this->user->role
             ];
         }
@@ -39,7 +39,7 @@ class ReactionsResource extends JsonResource
               $user_data [] = [
                 'id' => $user_info->id,
                 'name' => $user_info->first_name . " " . $user_info->last_name,
-                'profile_image_url' => 'http://127.0.0.1:8000/api'.$user_info->profile_image_url,
+                'profile_image_url' => 'http://127.0.0.1:8000'.$user_info->profile_image_url,
                 'role' => $this->user->role
             ];
         }

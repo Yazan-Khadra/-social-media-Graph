@@ -17,7 +17,7 @@ class SearchStudentResource extends JsonResource
         return [
             'id' =>$this->id,
             'name' => $this->first_name . " " . $this->last_name,
-            'profile_image_url' => 'http://127.0.0.1:8000/api'.$this->profile_image_url
+            'profile_image_url' => 'http://127.0.0.1:8000'.$this->profile_image_url
         ];
     }
 }

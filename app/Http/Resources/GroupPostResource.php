@@ -21,7 +21,7 @@ class GroupPostResource extends JsonResource
         $skills[] = [
             "id" => $skill->id,
             "name" => $skill->name,
-            "logo_url" => 'http://127.0.0.1:8000/api'.$skill->logo_url,
+            "logo_url" => 'http://127.0.0.1:8000'.$skill->logo_url,
             
         ];
     }
@@ -30,7 +30,7 @@ class GroupPostResource extends JsonResource
         $members[] = [
             "id" => $member->id,
             "name" => $member->first_name . " " . $member->last_name,
-            "profile_image_url" => 'http://127.0.0.1:8000/api'.$member-> profile_image_url,
+            "profile_image_url" => 'http://127.0.0.1:8000'.$member-> profile_image_url,
             "is_admin" => $member->pivot->is_admin,
         ];
     }

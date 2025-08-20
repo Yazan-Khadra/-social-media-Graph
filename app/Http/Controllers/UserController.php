@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller{
+    use JsonResponseTrait;
     // get User Profile Info
 //     function Get_User_Profile_Info() {
 //         try {
@@ -219,4 +220,34 @@ class UserController extends Controller{
 //             ], 500);
 //         }
 //     }
+public function Side_info() {
+    $user = User::find(Auth::user()->id);
+    if($user->role ==="student"){
+        $info = $user->Student;
+        $response = [
+            'id' => $info->id,
+            'profile_image_url' => $info->profile_image_url,
+            'role' => "student"
+        ];
+        return $this->JsonResponse($response,200);
+    }
+    else if ($user->role==="company") {
+           $info = $user->Company;
+        $response = [
+            'id' => $info->id,
+            'profile_image_url' => $info->logo_url,
+            'role' => "company"
+        ];
+        return $this->JsonResponse($response,200);
+    }
+    else {
+           $info = $user->Staff;
+        $response = [
+            'id' => $info->id,
+            'profile_image_url' => $info->profile_image_url,
+            'role' => "staff"
+        ];
+        return $this->JsonResponse($response,200);
+    }
+}
 }

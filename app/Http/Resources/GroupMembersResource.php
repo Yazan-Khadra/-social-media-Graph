@@ -22,7 +22,7 @@ class GroupMembersResource extends JsonResource
             'image' => $this->profile_image_url,
             'skill' =>[
                 "skill_name" => $skill->name,
-                "skill_logo" => 'http://127.0.0.1:8000/api'.$skill->logo_url
+                "skill_logo" => 'http://127.0.0.1:8000'.$skill->logo_url
             ],
             'is_admin' => $this->pivot->is_admin
         ];

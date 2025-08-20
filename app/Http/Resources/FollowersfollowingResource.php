@@ -20,7 +20,7 @@ class FollowersfollowingResource extends JsonResource
             return [
                 'id' => $user_info->id,
                 'name' => $user_info->first_name . " " . $user_info->last_name,
-                'profile_image_url' => 'http://127.0.0.1:8000/api'.$user_info->profile_image_url,
+                'profile_image_url' => 'http://127.0.0.1:8000'.$user_info->profile_image_url,
                 'role' => $this->role
             ];
         }
@@ -29,7 +29,7 @@ class FollowersfollowingResource extends JsonResource
             return [
                 'id' => $user_info->id,
                 'name' => $user_info->company_name,
-                'profile_image_url' => 'http://127.0.0.1:8000/api'.$user_info->logo_url,
+                'profile_image_url' => 'http://127.0.0.1:8000'.$user_info->logo_url,
                 'role' => $this->role
             ];
         }
@@ -38,7 +38,7 @@ class FollowersfollowingResource extends JsonResource
             return [
                 'id' => $user_info->id,
                 'name' => $user_info->first_name . " " . $user_info->last_name,
-                'profile_iamge_url' => 'http://127.0.0.1:8000/api'.$user_info->profile_image_url
+                'profile_iamge_url' => 'http://127.0.0.1:8000'.$user_info->profile_image_url
             ];
         }
        

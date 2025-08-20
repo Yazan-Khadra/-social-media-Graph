@@ -24,7 +24,7 @@ class GroupApplayResource extends JsonResource
             "student" => [
             "student_id" => $student->id,
              "student_name" => $student->first_name . " " . $student->last_name,
-             "image" => 'http://127.0.0.1:8000/api'.$student->profile_image_url,
+             "image" => 'http://127.0.0.1:8000'.$student->profile_image_url,
             ],
             "skill" => [
              "skill_id" =>$skill->id,
