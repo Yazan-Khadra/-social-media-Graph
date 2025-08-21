@@ -44,7 +44,7 @@ class SkillController extends Controller
                 $selectedSkills[] = [
                     'id' => $skill->id,
                     'name' => $skill->name,
-                    'logo_url'=>$skill->logo_url,
+                    'logo_url'=>'http://127.0.0.1:8000'.'/storage/'.$skill->logo_url,
                 ];
             }
         }

@@ -226,7 +226,7 @@ public function Side_info() {
         $info = $user->Student;
         $response = [
             'id' => $info->id,
-            'profile_image_url' => $info->profile_image_url,
+            'profile_image_url' => "http://127.0.0.1:8000".$info->profile_image_url,
             'role' => "student"
         ];
         return $this->JsonResponse($response,200);
@@ -235,7 +235,7 @@ public function Side_info() {
            $info = $user->Company;
         $response = [
             'id' => $info->id,
-            'profile_image_url' => $info->logo_url,
+            'profile_image_url' => "http://127.0.0.1:8000".$info->logo_url,
             'role' => "company"
         ];
         return $this->JsonResponse($response,200);
@@ -244,7 +244,7 @@ public function Side_info() {
            $info = $user->Staff;
         $response = [
             'id' => $info->id,
-            'profile_image_url' => $info->profile_image_url,
+            'profile_image_url' => "http://127.0.0.1:8000".$info->profile_image_url,
             'role' => "staff"
         ];
         return $this->JsonResponse($response,200);

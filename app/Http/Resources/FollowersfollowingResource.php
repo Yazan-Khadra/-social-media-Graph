@@ -21,6 +21,8 @@ class FollowersfollowingResource extends JsonResource
                 'id' => $user_info->id,
                 'name' => $user_info->first_name . " " . $user_info->last_name,
                 'profile_image_url' => 'http://127.0.0.1:8000'.$user_info->profile_image_url,
+                'year' => $user_info->year,
+                'major' =>$user_info->major,
                 'role' => $this->role
             ];
         }
@@ -34,7 +36,7 @@ class FollowersfollowingResource extends JsonResource
             ];
         }
         else {
-            $user_info = $this->Academic;
+            $user_info = $this->Staff;
             return [
                 'id' => $user_info->id,
                 'name' => $user_info->first_name . " " . $user_info->last_name,
