@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AcademicStaffController;
+use App\Http\Controllers\AcademicStaffPostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CommentResponsesController;
 use App\Http\Controllers\FollowController;
@@ -15,9 +17,11 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FreelancerPostController;
 use App\Http\Controllers\GroupApllayController;
+use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\StudentController;
+use App\Models\AcademicStaff;
 use App\Models\GroupApllay;
 use App\Models\Reaction;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -125,6 +129,7 @@ Route::controller(GroupController::class)->group(function() {
         Route::get('/group/member/{id}','GetGroupMember');
         //leave group
         Route::get('group/leave/{group_id}', 'Leave_Group');
+        Route::get('/groupsByProject', 'get_groups_by_project');
 
 
 
@@ -245,4 +250,22 @@ Route::middleware('Token')->post('/email/verify-otp', function(Request $request)
 
     return response()->json(['message' => 'done successfully']);
 });
+
+Route::controller(AcademicStaffController::class)->group(function() {
+   
+
+    Route::middleware(['Token'])->group(function() {
+        //academic staff register
+        Route::post('staff/register','Register_Staff_Member');
+     
+    });
+});
+Route::middleware('Token')->group(function () {
+    Route::post('/identity/set-info', [IdentityController::class, 'Set_info']);
+    
+    
+});
+Route::get('/identity/pending-orders', [IdentityController::class, 'Get_Pending_orders']);
+Route::post('/identity/response', [IdentityController::class, 'Response_to_order']);
+
 

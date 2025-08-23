@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
-            $table->string('mobile_number')->nullable();
-            $table->string('password');
             $table->string('profile_image')->nullable();
             $table->text('bio')->nullable();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

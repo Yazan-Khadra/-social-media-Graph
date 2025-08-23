@@ -13,9 +13,33 @@ class AcademicStaffController extends Controller
     use JsonResponseTrait;
 
     // Get all academic staff
+    public function Register_Staff_Member(Request $request) {
+        $validation = Validator::make($request->all(),[
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'profile_image_url' => 'file|mimes:png,jpg'
+        ]);
+        if($validation->fails()) {
+            return $this->JsonResponse($validation->errors(),422);
+        }
+          $profile_image_url = null;
+       if($request->hasFile("profile_image")){
+        $path = $request->profile_image->store('staff_images','public');
+         $profile_image_url = '/storage/' . $path;
+       }
+        AcademicStaff::create([
+            'id' => Auth::user()->id,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'profile_image' =>$profile_image_url,
+            'bio' => $request->bio?:null,
+            'user_id' => Auth::user()->id
+        ]);
+        return $this->JsonResponse("done sccessfully",200);
+    }
     public function show_all_academic_staff()
     {
-        $staff = AcademicStaff::select(['first_name','last_name','email','mobile_number','bio','profile_image_url'])->get();
+        $staff = AcademicStaff::select(['first_name','last_name','bio','profile_image_url'])->get();
         return $this->JsonResponseWithData('All Academic Staff:', $staff, 200);
     }
 
@@ -66,8 +90,6 @@ class AcademicStaffController extends Controller
             'first_name' => 'string|max:255',
             'last_name' => 'string|max:255',
             'bio' => 'nullable|string',
-            'email' => 'email|unique:academic_staff,email,' . $staff->id,
-            'mobile_number' => 'numeric|unique:academic_staff,mobile_number,' . $staff->id,
         ]);
         if ($validation->fails()) {
             return $this->JsonResponse($validation->errors(), 400);
@@ -75,12 +97,7 @@ class AcademicStaffController extends Controller
         $staff->first_name = $request->first_name;
         $staff->last_name = $request->last_name;
         $staff->bio = $request->bio;
-        if ($request->email) {
-            $staff->email = $request->email;
-        }
-        if ($request->mobile_number) {
-            $staff->mobile_number = $request->mobile_number;
-        }
+       
         $staff->save();
         return $this->JsonResponse('Academic staff information updated successfully', 200);
     }
@@ -89,10 +106,6 @@ class AcademicStaffController extends Controller
     public function destroy()
     {
         $user = Auth::user();
-        $staff = AcademicStaff::where('email', $user->email)->first();
-        if ($staff) {
-            $staff->delete();
-        }
         $user->delete();
         return $this->JsonResponse('Academic staff account deleted successfully', 200);
     }
@@ -109,7 +122,6 @@ class AcademicStaffController extends Controller
         $staff = $request->input('staff');
         $results = AcademicStaff::where('first_name', 'LIKE', "%{$staff}%")
             ->orWhere('last_name', 'LIKE', "%{$staff}%")
-            ->orWhere('bio', 'LIKE', "%{$staff}%")
             ->get();
         return $this->JsonResponseWithData('Search completed successfully', $results, 200);
     }

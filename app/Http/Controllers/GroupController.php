@@ -121,7 +121,24 @@ class GroupController extends Controller
 
         return $this->JsonResponse("Invitation sent successfully", 201);
     }
+public function get_groups_by_project(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'project_id' => 'required|exists:projects,id'
+    ]);
 
+    if ($validator->fails()) {
+        return $this->JsonResponse($validator->errors(), 400);
+    }
+
+    $user = Student::where('id', Auth::user()->id)->first();
+
+    $groups = $user->groups()
+        ->where('project_id', $request->project_id)
+        ->get();
+
+    return GroupInformationResource::collection($groups);
+}
     public function respondToInvitation(Request $request)
     {
         try{

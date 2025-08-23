@@ -82,4 +82,7 @@ public function followings()
     public function Staff() {
         return $this->hasOne(AcademicStaff::class,'user_id');
     }
+    public function Admin() {
+        return $this->hasOne(Admin::class,'user_id');
+    }
 }

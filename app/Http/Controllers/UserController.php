@@ -240,6 +240,17 @@ public function Side_info() {
         ];
         return $this->JsonResponse($response,200);
     }
+    else if ($user->role ==="admin") {
+         $info = $user->Admin;
+        $response = [
+            'id' => $info->id,
+            'name' => $info->name,
+            'profile_image_url' => "http://127.0.0.1:8000".$info->profile_image_url,
+            'role' => "Admin"
+        ];
+        return $this->JsonResponse($response,200);
+
+    }
     else {
            $info = $user->Staff;
         $response = [
