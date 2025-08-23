@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Resources\ProjectResource;
 use App\JsonResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +12,11 @@ class ProjectController extends Controller
 {
     use JsonResponseTrait;
     //show the projects by year and major
+    public function Get_All() {
+        $projects = Project::all();
+        return ProjectResource::collection($projects);
+        
+    }
     public function show_projects(Request $request){
         $validator = Validator::make($request->all(), [
             'year_id' => 'required|between:1,5',

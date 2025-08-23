@@ -49,8 +49,10 @@ Route::get('get/user_profile/info','Side_info')->middleware('Token');
 });
 Route::controller(ProjectController::class)->group(function(){
     Route::get('projects_list','show_projects');
+    Route::get('get_all_projects','Get_All');
     Route::post('add_project','add_project');
     Route::delete('delete_project/{project_id}','delete_project');
+
 });
 Route::controller(StudentController::class)->group(function() {
     Route::middleware("Token")->group(function() {
