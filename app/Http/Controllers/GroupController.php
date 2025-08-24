@@ -134,7 +134,7 @@ public function get_groups_by_project(Request $request)
     $user = Student::where('id', Auth::user()->id)->first();
 
     $groups = $user->groups()
-        ->where('project_id', $request->project_id)
+        ->where('groups.project_id', $request->project_id)
         ->get();
 
     return GroupInformationResource::collection($groups);

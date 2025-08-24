@@ -21,7 +21,9 @@ use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TechnicalSupportController;
 use App\Models\AcademicStaff;
+use App\Models\EmailOtp;
 use App\Models\GroupApllay;
 use App\Models\Reaction;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -131,11 +133,12 @@ Route::controller(GroupController::class)->group(function() {
         Route::get('/group/member/{id}','GetGroupMember');
         //leave group
         Route::get('group/leave/{group_id}', 'Leave_Group');
-        Route::get('/groupsByProject', 'get_groups_by_project');
+        
 
 
 
     });
+    Route::get('/groupsByProject', 'get_groups_by_project');
 });
 Route::controller(GroupApllayController::class)->group(function() {
     Route::middleware(["Token","Student"])->group(function() {
@@ -229,14 +232,18 @@ Route::controller(NotificationController::class)->group(function() {
 });
 
 
-Route::middleware('Token')->post('/email/verify-otp', function(Request $request) {
+
+
+Route::middleware('Token')->post('/email/verify-otp', function (Request $request) {
+    // تحقق من صحة الإدخال
     $request->validate([
         'otp' => 'required|string',
     ]);
 
-    $user = $request->user(); // أو Auth::user()، نفس الشيء إذا middleware موجود
+    $user = $request->user();
 
-    $otpRecord = \App\Models\EmailOtp::where('user_id', $user->id)
+    // البحث عن OTP صالح
+    $otpRecord = EmailOtp::where('user_id', $user->id)
         ->where('otp', $request->otp)
         ->where('expires_at', '>=', Carbon::now())
         ->first();
@@ -245,13 +252,16 @@ Route::middleware('Token')->post('/email/verify-otp', function(Request $request)
         return response()->json(['message' => 'Invalid or expired verification code'], 422);
     }
 
+    // تحديث حالة المستخدم
     $user->email_verified_at = now();
     $user->save();
 
-    $otpRecord->delete(); // حذف OTP بعد التحقق
+    // حذف الكود بعد الاستخدام
+    $otpRecord->delete();
 
-    return response()->json(['message' => 'done successfully']);
-});
+    return response()->json(['message' => 'Verified successfully!']);
+})->name('email.verify.otp');
+
 
 Route::controller(AcademicStaffController::class)->group(function() {
    
@@ -267,7 +277,15 @@ Route::middleware('Token')->group(function () {
     
     
 });
+// indentity
 Route::get('/identity/pending-orders', [IdentityController::class, 'Get_Pending_orders']);
 Route::post('/identity/response', [IdentityController::class, 'Response_to_order']);
+//technical support
+Route::post('/technical-support/issue', [TechnicalSupportController::class, 'Set_issue']);
 
+// Get all pending issues
+Route::get('/technical-support/issues', [TechnicalSupportController::class, 'Get_issues']);
+
+// Respond to an issue (send email)
+Route::post('/technical-support/respond/{id}', [TechnicalSupportController::class, 'respondToIssue']);
 
