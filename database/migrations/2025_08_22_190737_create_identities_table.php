@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('identities', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->primary();
+            $table->id();
             $table->timestamps();
             $table->string('image_url');
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');

@@ -39,6 +39,7 @@ Route::controller(JWTAuthController::class)->group(function() {
         Route::post('Register','register');
         Route::post('/role/set','set_role');
         Route::post('/company/register','company_register');
+        Route::get('/logout','logout');
     });
 
 

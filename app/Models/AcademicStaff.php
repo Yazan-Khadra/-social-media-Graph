@@ -11,6 +11,7 @@ class AcademicStaff extends Model
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'profile_image',
