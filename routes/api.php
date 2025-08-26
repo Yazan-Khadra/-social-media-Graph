@@ -141,7 +141,7 @@ Route::controller(GroupController::class)->group(function() {
         Route::get('/group/member/{id}','GetGroupMember');
         //leave group
         Route::get('group/leave/{group_id}', 'Leave_Group');
-        
+
 
 
 
@@ -206,11 +206,18 @@ Route::controller(FreelancerPostController::class)->group(function() {
         Route::delete('/freelancer-posts/delete/{id}', 'delete_post');
     });
     // freelancer application
+
+
+Route::middleware(['Token', 'Company'])->group(function () {
+
+        Route::post('/applications/{id}', [FreelancerApplicationController::class, 'review_application']);
+        });
+
 Route::middleware('student')->group(function () {
 
-    Route::post('/freelancer-applications', [FreelancerApplicationController::class, 'send_application']);
-    Route::get('/my-applications', [FreelancerApplicationController::class, 'my_applications']);
-});
+        Route::post('/freelancer-applications', [FreelancerApplicationController::class, 'send_application']);
+        Route::get('/my-applications', [FreelancerApplicationController::class, 'my_applications']);
+        });
 
 
 

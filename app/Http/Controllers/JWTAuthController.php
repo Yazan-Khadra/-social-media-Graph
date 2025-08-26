@@ -25,7 +25,7 @@ class JWTAuthController extends Controller
             'company_name' => 'required|string',
             'profile_image' => 'file|mimes:png,jpg'
         ]);
-        $profile_image_url = null; 
+        $profile_image_url = null;
         if($request->hasFile("profile_image")){
         $path = $request->profile_image->store('profile_images','public');
        }
@@ -49,17 +49,14 @@ public function Register_Auth(Request $request) {
         return $this->JsonResponse($validator->errors(), 422);
     }
 
-<<<<<<< HEAD
     // إنشاء المستخدم
-=======
     // 1️⃣ إنشاء المستخدم
->>>>>>> 410d3aae6441b5aa1314422330c37c659152f9db
     $user = User::create([
         'email' => $request->email,
         'password' => Hash::make($request->password),
     ]);
 
-  
+
     // $otp = rand(100000, 999999);
 
     // EmailOtp::create([
@@ -68,16 +65,16 @@ public function Register_Auth(Request $request) {
     //     'expires_at' => Carbon::now()->addMinutes(10),
     // ]);
 
-    
+
     // Mail::send('auth.verify-otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
     //     $message->to($user->email)
     //             ->subject('Email Verification Code');
     // });
 
-    
+
     $token = JWTAuth::fromUser($user);
 
-    
+
     $response = [
         "id" => $user->id,
         "message" => "Registration successful. Please check your email for the verification code.",

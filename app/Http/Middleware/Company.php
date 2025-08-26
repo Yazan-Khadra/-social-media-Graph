@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use App\JsonResponseTrait;
 use Closure;
 use Illuminate\Http\Request;
-use App\Http\Middleware\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
 class Company

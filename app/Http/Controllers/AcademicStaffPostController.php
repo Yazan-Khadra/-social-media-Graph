@@ -91,6 +91,8 @@ class AcademicStaffPostController extends Controller
 {
     $posts = AcademicPost::with('academicStaff')
         ->get()
+        ->where('created_at', '>=', Carbon::now()->subDays(3))
+        ->orderBy('created_at', 'desc')
         ->map(function ($post) {
             return [
                 'id' => $post->id,

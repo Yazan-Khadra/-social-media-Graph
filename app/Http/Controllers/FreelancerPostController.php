@@ -149,7 +149,10 @@ class FreelancerPostController extends Controller
 }
 public function get_all_posts()
 {
-    $posts = FreelancerPost::with(['company', 'skill', 'workPlaces', 'jobTypes'])->get();
+    $posts = FreelancerPost::with(['company', 'skill', 'workPlaces', 'jobTypes'])
+    ->where('created_at', '>=', Carbon::now()->subDays(3)) 
+    ->orderBy('created_at', 'desc')
+    ->get();
 
     $data = $posts->map(function ($post) {
         return [
