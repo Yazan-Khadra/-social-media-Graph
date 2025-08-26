@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('identities', function (Blueprint $table) {
+        Schema::create('technical_supports', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('image_url');
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('name');
+            $table->string('email');
+            $table->enum('issue',['login_problem','report_issue','page_error']);
+            $table->enum('status',['pending','done'])->default('pending');
+            $table->string('description');
+            
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('identities');
+        Schema::dropIfExists('technical_supports');
     }
 };

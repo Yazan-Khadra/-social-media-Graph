@@ -38,50 +38,55 @@ class JWTAuthController extends Controller
        ]);
        return $this->JsonResponse("company created succsefully",201);
     }
- public function Register_Auth(Request $request) {
-    $validator = Validator::make($request->all(),[
-        'email' => 'email|max:255|unique:users',
+public function Register_Auth(Request $request) {
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email|max:255|unique:users',
         'password' => 'required|string|min:6',
         'confirm_password' => 'required|same:password',
     ]);
 
-    if($validator->fails()) {
-        return $this->JsonResponse($validator->errors(),422);
+    if ($validator->fails()) {
+        return $this->JsonResponse($validator->errors(), 422);
     }
 
+<<<<<<< HEAD
     // إنشاء المستخدم
+=======
+    // 1️⃣ إنشاء المستخدم
+>>>>>>> 410d3aae6441b5aa1314422330c37c659152f9db
     $user = User::create([
-        "email" => $request->email,
+        'email' => $request->email,
         'password' => Hash::make($request->password),
     ]);
 
-    // 🔹 إنشاء OTP وإرساله بالبريد
+  
+    // $otp = rand(100000, 999999);
 
-//     $otp = rand(100000, 999999); // 6 أرقام
+    // EmailOtp::create([
+    //     'user_id' => $user->id,
+    //     'otp' => $otp,
+    //     'expires_at' => Carbon::now()->addMinutes(10),
+    // ]);
 
-//  EmailOtp::create([
-//         'user_id' => $user->id,
-//         'otp' => $otp,
-//         'expires_at' => Carbon::now()->addMinutes(10), // صلاحية 10 دقائق
-//     ]);
+    
+    // Mail::send('auth.verify-otp', ['otp' => $otp, 'user' => $user], function ($message) use ($user) {
+    //     $message->to($user->email)
+    //             ->subject('Email Verification Code');
+    // });
 
-//    Mail::raw("Your verification code is: $otp", function($message) use ($user) {
-//     $message->to($user->email)
-//             ->subject('Email Verification Code');
-// });
-
-
-    // إنشاء توكن JWT
+    
     $token = JWTAuth::fromUser($user);
 
+    
     $response = [
         "id" => $user->id,
-        "message" => "registeration done successfully",
+        "message" => "Registration successful. Please check your email for the verification code.",
         "token" => $token,
     ];
 
-    return $this->JsonResponse($response,201);
+    return $this->JsonResponse($response, 201);
 }
+
 
     public function Set_role(Request $request) {
         $validation = Validator::make($request->all(),[

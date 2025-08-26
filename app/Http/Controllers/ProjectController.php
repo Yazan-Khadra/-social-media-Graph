@@ -35,14 +35,14 @@ class ProjectController extends Controller
                 if(!$projects){
                     return $this->JsonResponseWithData("No projects found", null, 404);
                 }
-            return $this->JsonResponseWithData("Projects for year {$request->year_id} and major {$request->major_id}", $projects, 200);
+            return  ProjectResource::collection($projects);
         } else {
             // For years 1 and 3, show all projects for that year
             $projects = Project::where('year_id', $request->year_id)->get();
             if(!$projects){
                 return $this->JsonResponseWithData("No projects found", null, 404);
             }
-            return $this->JsonResponseWithData("Projects for year {$request->year_id}", $projects, 200);
+            return ProjectResource::collection($projects);
         }
     }
 
