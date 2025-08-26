@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\JsonResponseTrait;
 use App\Models\Freelancer_application;
 use App\Models\FreelancerPost;
 use App\Models\Company;
 use App\Models\User;
+use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FreelancerApplicationController extends Controller
 {
+    use JsonResponseTrait;
     public function send_application(Request $request)
     {
         $user = Auth::user();

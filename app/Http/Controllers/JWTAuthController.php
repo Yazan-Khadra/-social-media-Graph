@@ -25,6 +25,7 @@ class JWTAuthController extends Controller
             'company_name' => 'required|string',
             'profile_image' => 'file|mimes:png,jpg'
         ]);
+        $profile_image_url = null; 
         if($request->hasFile("profile_image")){
         $path = $request->profile_image->store('profile_images','public');
        }
@@ -47,7 +48,7 @@ class JWTAuthController extends Controller
     if($validator->fails()) {
         return $this->JsonResponse($validator->errors(),422);
     }
-    
+
     // إنشاء المستخدم
     $user = User::create([
         "email" => $request->email,

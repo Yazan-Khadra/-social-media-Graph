@@ -16,8 +16,9 @@ class AcademicStaffPostController extends Controller
     // Add post for authenticated academic staff
     public function add_post(Request $request)
     {
+
         $user = Auth::user();
-        $staff = AcademicStaff::where('email', $user->email)->first();
+        $academy = AcademicStaff::where('user_id', $user->id)->first();
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
@@ -31,7 +32,7 @@ class AcademicStaffPostController extends Controller
         $post = AcademicPost::create([
             'title' => $request->title,
             'description' => $request->description,
-            'academic_staff_id' => $staff->id,
+            'academic_staff_id' => $academy->id,
         ]);
 
         return $this->JsonResponseWithData('Post created successfully', [
@@ -46,11 +47,11 @@ class AcademicStaffPostController extends Controller
     public function delete_post($id)
     {
         $user = Auth::user();
-        $staff = AcademicStaff::where('email', $user->email)->first();
+        $academy = AcademicStaff::where('user_id', $user->id)->first();
         $post = AcademicPost::findOrFail($id);
 
         // Check if the authenticated staff owns this post
-        if ($post->academic_staff_id !== $staff->id) {
+        if ($post->academic_staff_id !== $academy->id) {
             return $this->JsonResponse('Unauthorized. You can only delete your own posts.', 403);
         }
 
@@ -61,11 +62,11 @@ class AcademicStaffPostController extends Controller
     public function update_post(Request $request, $id)
     {
         $user = Auth::user();
-        $staff = AcademicStaff::where('email', $user->email)->first();
+        $academy = AcademicStaff::where('user_id', $user->id)->first();
         $post = AcademicPost::findOrFail($id);
 
         // Check if the authenticated staff owns this post
-        if ($post->academic_staff_id !== $staff->id) {
+        if ($post->academic_staff_id !== $academy->id) {
             return $this->JsonResponse('Unauthorized. You can only update your own posts.', 403);
         }
 
@@ -86,15 +87,49 @@ class AcademicStaffPostController extends Controller
         return $this->JsonResponse('Post updated successfully', 200);
     }
 
-    public function get_all_posts()
-    {
-        $posts = AcademicPost::all();
-        return $this->JsonResponseWithData('All academic posts retrieved successfully', $posts, 200);
-    }
+   public function get_all_posts()
+{
+    $posts = AcademicPost::with('academicStaff')
+        ->get()
+        ->map(function ($post) {
+            return [
+                'id' => $post->id,
+                'title' => $post->title,
+                'description' => $post->description,
+                'academic_staff_id' => $post->academic_staff_id,
+                'academic_staff_name' => $post->academicStaff->first_name . ' ' . $post->academicStaff->last_name,
+            ];
+        });
+
+    return $this->JsonResponseWithData(
+        'All academic posts retrieved successfully',
+        $posts,
+        200
+    );
+}
+
 
     public function get_posts_of_academic_staff($id)
-    {
-        $posts = AcademicPost::where('academic_staff_id', $id)->get();
-        return $this->JsonResponseWithData('All posts for this academic staff retrieved successfully', $posts, 200);
-    }
+{
+
+    $posts = AcademicPost::with('academicStaff')
+        ->where('academic_staff_id', $id)
+        ->get()
+        ->map(function ($post) {
+            return [
+                'id' => $post->id,
+                'title' => $post->title,
+                'description' => $post->description,
+                'academic_staff_id' => $post->academic_staff_id,
+                'academic_staff_name' => $post->academicStaff->first_name . ' ' . $post->academicStaff->last_name,
+            ];
+        });
+
+    return $this->JsonResponseWithData(
+        'All posts for this academic staff retrieved successfully',
+        $posts,
+        200
+    );
+}
+
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AcademicStaffController;
 use App\Http\Controllers\AcademicStaffPostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\CommentResponsesController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupPostController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FreelancerPostController;
+use App\Http\Controllers\FreelancerApplicationController;
 use App\Http\Controllers\GroupApllayController;
 use App\Http\Controllers\IdentityController;
 use App\Http\Controllers\NotificationController;
@@ -42,10 +44,15 @@ Route::controller(JWTAuthController::class)->group(function() {
 
 }
 );
+// edit password of an account
+Route::middleware('Token')->group(function() {
+    Route::post('user/change-password', [PasswordController::class, 'changePassword']);
+});
+
 Route::controller(UserController::class)->group(function() {
 
 Route::get('get/user_profile/info','Side_info')->middleware('Token');
-    
+
 });
 Route::controller(ProjectController::class)->group(function(){
     Route::get('projects_list','show_projects');
@@ -63,8 +70,8 @@ Route::controller(StudentController::class)->group(function() {
         //get user informations
 
         Route::get('/user/info',"Get_User_Profile_Info");
-        
-       
+
+
         //fill the user informatons
         Route::post("/fill/user/info","Fill_Profile_Info");
         // add social links
@@ -82,7 +89,7 @@ Route::controller(StudentController::class)->group(function() {
         //get users post
         Route::get('/user/posts/{id}','Get_User_Post');
         // find student
-       
+
 
 
 
@@ -168,10 +175,10 @@ Route::controller(PostController::class)->group(function() {
         Route::post('posts/make','Create_Post');
         Route::delete('post/delete/{id}','Delete_Post');
         Route::put('post/update','Update_Post');
-        Route::get('hashtags/search','searchHashtags');
+        Route::post('search/Hashtags','searchHashtags');
     });
     Route::get('posts/all/{id}','Get_Posts');
-    Route::get('posts/hashtag/{hashtag}','getPostsByHashtag');
+    Route::get('posts/hashtag/{hashtag}', [PostController::class, 'getPostsByHashtag']);
 
 
 });
@@ -187,13 +194,20 @@ Route::controller(GroupPostController::class)->group(function() {
 Route::controller(FreelancerPostController::class)->group(function() {
     // Public routes (no authentication required)
     Route::get('/freelancer-posts', 'get_all_posts');
-    Route::get('/freelancer-posts/{id}', 'show_post');
-
+    Route::get('/freelancer-posts/{id}', [FreelancerPostController::class, 'get_post_of_company']);
+    //freelancer posts
     Route::middleware(['Token', 'Company'])->group(function() {
         Route::post('/freelancer-posts/add', 'add_post');
-        Route::put('/freelancer-posts/update/{id}', 'update_post');
+        Route::put('/freelancer-posts_update/{id}',[FreelancerPostController::class, 'update_post']);
         Route::delete('/freelancer-posts/delete/{id}', 'delete_post');
     });
+    // freelancer application
+Route::middleware('student')->group(function () {
+
+    Route::post('/freelancer-applications', [FreelancerApplicationController::class, 'send_application']);
+    Route::get('/my-applications', [FreelancerApplicationController::class, 'my_applications']);
+});
+
 
 
 });
@@ -253,19 +267,40 @@ Route::middleware('Token')->post('/email/verify-otp', function(Request $request)
     return response()->json(['message' => 'done successfully']);
 });
 
-Route::controller(AcademicStaffController::class)->group(function() {
-   
+    Route::controller(AcademicStaffController::class)->group(function() {
 
-    Route::middleware(['Token'])->group(function() {
-        //academic staff register
-        Route::post('staff/register','Register_Staff_Member');
-     
+        Route::middleware(['Token','staff'])->group(function() {
+            //academic staff register
+            Route::post('staff/register','Register_Staff_Member');
+            Route::post('staff/updateInfo','update_academic_staff_info');
+            Route::post('staff/updateImage','update_logo_url');
+            Route::delete('staff/deleteImage','delete_logo_url');
+            Route::delete('staff/deleteaccount','destroy');
+        });
+        Route::get('/show_staff/{id}', [AcademicStaffController::class, 'show_one_academic_staff']);
+        Route::get('/show_all_staff','show_all_academic_staff');
+        Route::get('/search_academy','search');
     });
-});
+        // academy post
+        Route::controller(AcademicStaffPostController::class)->group(function() {
+
+        Route::get('academic-posts','get_all_posts');
+        Route::get('academic-posts/{id}',[AcademicStaffPostController::class, 'get_posts_of_academic_staff']);
+        Route::middleware(['Token','staff'])->group(function() {
+            Route::post('create_post','add_post');
+            Route::post('update_post/{id}','update_post');
+            Route::delete('delete_post/{id}','delete_post');
+
+
+        });
+
+
+    });
+
 Route::middleware('Token')->group(function () {
     Route::post('/identity/set-info', [IdentityController::class, 'Set_info']);
-    
-    
+
+
 });
 Route::get('/identity/pending-orders', [IdentityController::class, 'Get_Pending_orders']);
 Route::post('/identity/response', [IdentityController::class, 'Response_to_order']);

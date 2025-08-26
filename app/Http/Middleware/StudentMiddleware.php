@@ -3,21 +3,34 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\JsonResponseTrait;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class StudentMiddleware
 {
-    public function handle(Request $request, Closure $next)
+       use JsonResponseTrait;
+         /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+       public function handle(Request $request, Closure $next): Response
     {
-        $user=JWTAuth::parsetoken()->authenticate();
-    
-        if (Auth::check() && Auth::user()->role === 'student') {
-            return $next($request); // الطالب مسموح له بالمتابعة
+        $user = Auth::user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            return $this->JsonResponse('Unauthorized access', 401);
         }
 
-        // في حالة المستخدم ليس طالب
-        abort(403, 'Unauthorized - Only students can access this route.');
+        // Check if user has company role
+        if ($user->role !== 'student') {
+            return $this->JsonResponse('Access denied. Only student can perform this action.', 403);
+        }
+
+        return $next($request);
     }
+
 }
