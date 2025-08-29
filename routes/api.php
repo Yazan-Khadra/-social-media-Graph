@@ -278,7 +278,7 @@ Route::middleware('Token')->group(function () {
     
     
 });
-// indentity
+// indentity    
 Route::get('/identity/pending-orders', [IdentityController::class, 'Get_Pending_orders']);
 Route::post('/identity/response', [IdentityController::class, 'Response_to_order']);
 //technical support
