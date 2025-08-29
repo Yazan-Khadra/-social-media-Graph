@@ -309,14 +309,14 @@ return PostsResource::collection($student_posts);
     }
     public function major(Request $reqeust) {
         $validation = Validator::make($reqeust->all(),[
-            'majo_id' => 'required'
+            'major_id' => 'required'
         ]);
         if($validation->fails()) {
             return $this->JsonResponse($validation->errors(),422);
         }
         
         Student::where('id',Auth::user()->id)->update([
-            'major' => $reqeust->major_id
+            'major_id' => $reqeust->major_id
         ]);
         return $this->JsonResponse('done',202);
     }
