@@ -294,4 +294,31 @@ return PostsResource::collection($student_posts);
 
         return SearchStudentResource::collection($students);
     }
+    public function update_year(Request $reqeust) {
+        $validation = Validator::make($reqeust->all(),[
+            'year_id' => 'required'
+        ]);
+        if($validation->fails()) {
+            return $this->JsonResponse($validation->errors(),422);
+        }
+        
+        Student::where('id',Auth::user()->id)->update([
+            'year_id' => $reqeust->year_id
+        ]);
+        return $this->JsonResponse('done',202);
+    }
+    public function major(Request $reqeust) {
+        $validation = Validator::make($reqeust->all(),[
+            'majo_id' => 'required'
+        ]);
+        if($validation->fails()) {
+            return $this->JsonResponse($validation->errors(),422);
+        }
+        
+        Student::where('id',Auth::user()->id)->update([
+            'major' => $reqeust->major_id
+        ]);
+        return $this->JsonResponse('done',202);
+    }
+    
 }

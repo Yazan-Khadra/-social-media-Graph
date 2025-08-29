@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\JsonResponseTrait;
 use App\Models\Freelancer_application;
 use App\Models\FreelancerPost;
 use App\Models\Company;
 use App\Models\User;
+use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FreelancerApplicationController extends Controller
 {
+    use JsonResponseTrait;
     public function send_application(Request $request)
     {
         $user = Auth::user();
@@ -40,6 +44,32 @@ class FreelancerApplicationController extends Controller
 
         return $this->JsonResponse('Application submitted!', 201);
     }
+    public function review_application(Request $request, $application_id)
+{
+    $user = Auth::user();
+    $validator = Validator::make($request->all(), [
+        'status' => 'required|in:accepted,rejected',
+    ]);
+
+    if ($validator->fails()) {
+        return $this->JsonResponse($validator->errors(), 422);
+    }
+
+    $application = Freelancer_application::findOrFail($application_id);
+
+    // نتحقق إذا البوست تبع الشركة الحالية
+    $post = FreelancerPost::find($application->freelance_post_id);
+    if (!$post || $post->company_id !== $user->id) {
+        return $this->JsonResponse('Unauthorized to review this application', 403);
+    }
+
+    // تحديث حالة الطلب
+    $application->status = $request->status;
+    $application->save();
+
+    return $this->JsonResponse("Application {$request->status} successfully!", 200);
+}
+
 
     // Get all applications for the authenticated user
     public function my_applications(Request $request)

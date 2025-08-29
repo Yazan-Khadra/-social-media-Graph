@@ -8,15 +8,16 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
-class StudentMiddleware
+class staff
 {
-       use JsonResponseTrait;
-         /**
+      use JsonResponseTrait;
+
+    /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-       public function handle(Request $request, Closure $next): Response
+   public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
 
@@ -26,11 +27,10 @@ class StudentMiddleware
         }
 
         // Check if user has company role
-        if ($user->role !== 'student') {
-            return $this->JsonResponse('Access denied. Only student can perform this action.', 403);
+        if ($user->role !== 'staff') {
+            return $this->JsonResponse('Access denied. Only Academystaff can perform this action.', 403);
         }
 
         return $next($request);
     }
-
 }

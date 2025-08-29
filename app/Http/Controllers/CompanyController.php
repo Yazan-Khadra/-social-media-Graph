@@ -16,17 +16,21 @@ class CompanyController extends Controller
     use JsonResponseTrait;
 
     //Get all companies
-   
+
     public function show_all_company()
     {
-        $companies = Company::select(['company_name','email','mobile_number', 'description', 'logo_url'])->get();
+        $companies = Company::select(['company_name','mobile_number', 'description', 'logo_url'])->get();
         return $this->JsonResponseWithData('All Companies : ', $companies, 200);
     }
 
     //Get specific company by ID
     public function show_one_company($id)
     {
-        $company = Company::findOrFail($id);
+
+        $company = Company::find($id);
+        if(!$company){
+        return $this->JsonResponse('there is no company with this id', 400);
+        }
         return $this->JsonResponseWithData('Company retrieved successfully', $company, 200);
     }
 
@@ -43,8 +47,7 @@ class CompanyController extends Controller
             return $this->JsonResponse($validation->errors(), 400);
         }
 
-                // Find existing company record for this user
-        $company = Company::where('email', $user->email)->first();
+        $company = Company::where('user_id', $user->id)->first();
 
         if (!$company) {
             return $this->JsonResponse("Company not found. Please register as company first.", 404);
@@ -79,7 +82,7 @@ class CompanyController extends Controller
         }
 
         // Find existing company record for this user
-        $company = Company::where('email', $user->email)->first();
+        $company = Company::where('user_id', $user->id)->first();
 
         if (!$company) {
             return $this->JsonResponse("Company not found. Please create company info first.", 404);
@@ -104,8 +107,7 @@ class CompanyController extends Controller
         }
 
         // Find existing company record for this user
-        $company = Company::where('email', $user->email)->first();
-
+        $company = Company::where('user_id', $user->id)->first();
         if (!$company) {
             return $this->JsonResponse("Company not found. Please create company info first.", 404);
         }
@@ -122,8 +124,7 @@ class CompanyController extends Controller
         $user = Auth::user();
 
         // Find existing company record for this user
-        $company = Company::where('email', $user->email)->first();
-
+        $company = Company::where('user_id', $user->id)->first();
         if (!$company) {
             return $this->JsonResponse("Company not found. Please create company info first.", 404);
         }
@@ -131,8 +132,6 @@ class CompanyController extends Controller
         $validation = Validator::make($request->all(), [
             'company_name' => 'string|max:255',
             'description' => 'nullable|string',
-            'email' => 'email|unique:companies,email,' . $company->id,
-            'mobile_number' => 'numeric|regex:/^09\d{8}$/|unique:companies,mobile_number,' . $company->id,
         ]);
 
         if ($validation->fails()) {
@@ -141,12 +140,6 @@ class CompanyController extends Controller
 
         $company->company_name = $request->company_name;
         $company->description = $request->description;
-        if ($request->email) {
-            $company->email = $request->email;
-        }
-        if ($request->mobile_number) {
-            $company->mobile_number = $request->mobile_number;
-        }
         $company->save();
 
         return $this->JsonResponse('Company information updated successfully', 200);
@@ -156,7 +149,7 @@ class CompanyController extends Controller
         $user = Auth::user();
 
         // Find existing company record for this user
-        $company = Company::where('email', $user->email)->first();
+        $company = Company::where('user_id', $user->id)->first();
 
         if (!$company) {
             return $this->JsonResponse("Company not found. Please create company info first.", 404);
@@ -192,7 +185,7 @@ class CompanyController extends Controller
         $user = Auth::user();
 
         // Find existing company record for this user
-        $company = Company::where('email', $user->email)->first();
+        $company = Company::where('user_id', $user->id)->first();
 
         if (!$company) {
             return $this->JsonResponse("Company not found. Please create company info first.", 404);
@@ -219,7 +212,7 @@ class CompanyController extends Controller
         $user = Auth::user();
 
         // Get company record for this user
-        $company = Company::where('email', $user->email)->first();
+        $company = Company::where('user_id', $user->id)->first();
 
         if ($company) {
             $company->delete();

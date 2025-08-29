@@ -15,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware -> alias([
             'Token' => \App\Http\Middleware\JwtMiddleware::class,
             'Company' => \App\Http\Middleware\Company::class,
-            'Student' => \App\Http\Middleware\StudentMiddleware::class,
+            'student' => \App\Http\Middleware\StudentMiddleware::class,
+            'staff'=>\App\Http\Middleware\staff::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
