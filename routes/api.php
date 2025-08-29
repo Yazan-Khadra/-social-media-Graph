@@ -130,7 +130,7 @@ Route::middleware("Token")->group(function () {
 });
 
 Route::controller(GroupController::class)->group(function() {
-    Route::middleware(["Token","Student"])->group(function() {
+    Route::middleware(["Token","student"])->group(function() {
         // Create group
         Route::post('/groups_Create', 'createGroup');
         // Get all groups
@@ -155,7 +155,7 @@ Route::controller(GroupController::class)->group(function() {
     Route::get('/groupsByProject', 'get_groups_by_project');
 });
 Route::controller(GroupApllayController::class)->group(function() {
-    Route::middleware(["Token","Student"])->group(function() {
+    Route::middleware(["Token","student"])->group(function() {
         Route::post("group/applay","Applay_to_Group");
     });
     Route::post("Applay/response",'Response_To_Applay_Request');
@@ -193,7 +193,7 @@ Route::controller(PostController::class)->group(function() {
 
 });
 Route::controller(GroupPostController::class)->group(function() {
-    Route::middleware('Student')->group(function() {
+    Route::middleware('student')->group(function() {
         Route::post('group/post/create','Create_Post');
     });
     Route::get('group/posts/get','Get_Groups_Posts');
