@@ -67,7 +67,7 @@ Route::controller(ProjectController::class)->group(function(){
 Route::controller(StudentController::class)->group(function() {
     Route::middleware("Token")->group(function() {
         //register user informations
-         Route::middleware('Student')->group(function() {
+         Route::middleware('student')->group(function() {
         Route::post('Register','register');
     });
         //get user informations
@@ -92,6 +92,12 @@ Route::controller(StudentController::class)->group(function() {
         //get users post
         Route::get('/user/posts/{id}','Get_User_Post');
         // find student
+       
+    Route::post('/student/update-year',  'update_year');
+
+
+    Route::post('/student/major',  'major');
+
 
 
 
@@ -124,7 +130,7 @@ Route::middleware("Token")->group(function () {
 });
 
 Route::controller(GroupController::class)->group(function() {
-    Route::middleware(["Token","Student"])->group(function() {
+    Route::middleware(["Token","student"])->group(function() {
         // Create group
         Route::post('/groups_Create', 'createGroup');
         // Get all groups
@@ -149,7 +155,7 @@ Route::controller(GroupController::class)->group(function() {
     Route::get('/groupsByProject', 'get_groups_by_project');
 });
 Route::controller(GroupApllayController::class)->group(function() {
-    Route::middleware(["Token","Student"])->group(function() {
+    Route::middleware(["Token","student"])->group(function() {
         Route::post("group/applay","Applay_to_Group");
     });
     Route::post("Applay/response",'Response_To_Applay_Request');
@@ -187,7 +193,7 @@ Route::controller(PostController::class)->group(function() {
 
 });
 Route::controller(GroupPostController::class)->group(function() {
-    Route::middleware('Student')->group(function() {
+    Route::middleware('student')->group(function() {
         Route::post('group/post/create','Create_Post');
     });
     Route::get('group/posts/get','Get_Groups_Posts');
@@ -320,7 +326,7 @@ Route::middleware('Token')->group(function () {
 
 
 });
-// indentity
+// indentity    
 Route::get('/identity/pending-orders', [IdentityController::class, 'Get_Pending_orders']);
 Route::post('/identity/response', [IdentityController::class, 'Response_to_order']);
 //technical support

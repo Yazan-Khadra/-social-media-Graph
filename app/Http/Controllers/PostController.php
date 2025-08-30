@@ -59,20 +59,29 @@ class PostController extends Controller
             'admin_id' => Auth::user()->id
 
         ]);
-        $hashtags = $request->input('hashtags', []); // array جاية من الفرونت
+        $new_hashtags = $request->input('new_hashtags', []); // array جاية من الفرونت
 
-        $hashtagIds = [];
-        foreach ($hashtags as $tag) {
-            $cleanTag = trim(mb_strtolower(ltrim($tag, '#')));
-            if (!empty($cleanTag)) {
-                $hashtag = Hashtag::firstOrCreate(['name' => $cleanTag]);
-                $hashtagIds[] = $hashtag->id;
-            }
-        }
+        $hashtagIds = $request->input('hash_id',[]);
+        // foreach ($hashtags as $tag) {
+        //     $cleanTag = trim(mb_strtolower(ltrim($tag, '#')));
+        //     if (!empty($cleanTag)) {
+        //         $hashtag = Hashtag::firstOrCreate(['name' => $cleanTag]);
+        //         $hashtagIds[] = $hashtag->id;
+        //     }
+        // }
 
 // ربط البوست بالهاشتاغات
 if (!empty($hashtagIds)) {
+    
     $post->hashtags()->attach($hashtagIds);
+}
+if(!empty($new_hashtags)){
+
+    $data = array_map(fn($tag) => ['name' => $tag], $new_hashtags);
+    Hashtag::insertOrIgnore($data);
+    $new_hashtagsIds = Hashtag::whereIn('name', $new_hashtags)->pluck('id')->toArray();
+    $post->hashtags()->syncWithoutDetaching($new_hashtagsIds);
+    
 }
         // check if the post is tags with many users
         if($request->input('ids')){
