@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('freelancer_post_id')->constrained()->onDelete('cascade');
             $table->foreignId('job_type_id')->constrained()->onDelete('cascade');
-            $table->unique(['freelancer_post_id', 'work_place_id']);
+            // $table->unique(['freelancer_post_id', 'work_place_id']);
             $table->timestamps();
         });
     }
